@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COBIT 2019 — Gestão de Governança</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<!-- docx.js para exportação Word no navegador -->
+<script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
+<style>
+:root {
+  --bg:#f0f4fa; --white:#fff; --border:#e2e8f0; --border2:#edf0f7;
+  --text:#1a2035; --muted:#64748b; --muted2:#94a3b8;
+  --accent:#2563eb; --accent-s:#eff6ff; --accent-b:#bfdbfe;
+  --green:#059669; --green-s:#ecfdf5; --green-b:#a7f3d0;
+  --yellow:#d97706; --yellow-s:#fffbeb; --yellow-b:#fde68a;
+  --red:#dc2626; --red-s:#fef2f2; --red-b:#fecaca;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,.1),0 8px 32px rgba(0,0,0,.06);
+  --edm:#7c3aed; --edm-s:#f5f3ff; --edm-b:#ddd6fe;
+  --apo:#0891b2; --apo-s:#ecfeff; --apo-b:#a5f3fc;
+  --bai:#d97706; --bai-s:#fffbeb; --bai-b:#fde68a;
+  --dss:#db2777; --dss-s:#fdf2f8; --dss-b:#fbcfe8;
+  --mea:#059669; --mea-s:#ecfdf5; --mea-b:#a7f3d0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;font-size:15px;line-height:1.6;}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 1.5rem;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.topbar-brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1rem;cursor:pointer;}
+.topbar-brand .badge{background:var(--accent);color:#fff;font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:6px;letter-spacing:.04em;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.proj-name-top{font-size:.82rem;color:var(--muted);background:var(--bg);padding:5px 12px;border-radius:8px;border:1px solid var(--border);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.top-pct{font-weight:800;font-size:1rem;color:var(--accent);}
+
+/* ── LAYOUT ── */
+.page{display:none;animation:fadeUp .3s ease;}
+.page.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.wrap{max-width:980px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+
+/* ── BOTÕES ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:10px;font-family:inherit;font-size:.88rem;font-weight:600;cursor:pointer;border:none;transition:all .18s;text-decoration:none;white-space:nowrap;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:#1d4ed8;transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,99,235,.28);}
+.btn-primary:disabled{background:var(--muted2);cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);}
+.btn-ghost:hover{background:var(--white);color:var(--text);}
+.btn-danger{background:var(--red-s);color:var(--red);border:1px solid var(--red-b);}
+.btn-danger:hover{background:#fee2e2;}
+.btn-green{background:var(--green-s);color:var(--green);border:1px solid var(--green-b);}
+.btn-green:hover{background:#d1fae5;}
+.btn-sm{padding:6px 12px;font-size:.78rem;}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+
+/* ── CARDS GERAIS ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:1.5rem;box-shadow:var(--shadow);}
+
+/* ══════════════════════════════
+   PÁGINA: PROJETOS
+══════════════════════════════ */
+.projects-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;}
+.projects-title{font-size:1.5rem;font-weight:800;letter-spacing:-.02em;}
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:2rem;}
+.proj-card{background:var(--white);border:2px solid var(--border);border-radius:14px;padding:1.2rem 1.4rem;cursor:pointer;transition:all .18s;position:relative;}
+.proj-card:hover{border-color:var(--accent-b);box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.proj-card.new-card{border-style:dashed;display:flex;align-items:center;justify-content:center;gap:10px;color:var(--muted);font-weight:600;font-size:.9rem;min-height:120px;}
+.proj-card.new-card:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-s);}
+.proj-card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.8rem;}
+.proj-card-name{font-weight:700;font-size:1rem;color:var(--text);margin-bottom:3px;}
+.proj-card-meta{font-size:.75rem;color:var(--muted);}
+.proj-card-goal{font-size:.75rem;font-weight:600;padding:3px 10px;border-radius:100px;background:var(--accent-s);border:1px solid var(--accent-b);color:var(--accent);margin-bottom:.8rem;display:inline-block;}
+.proj-card-bar-wrap{margin-top:.8rem;}
+.proj-card-bar-label{display:flex;justify-content:space-between;font-size:.73rem;color:var(--muted);margin-bottom:4px;}
+.proj-card-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.proj-card-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),#7c3aed);transition:width .5s;}
+.proj-actions{display:flex;gap:6px;margin-top:.8rem;}
+.proj-menu{position:absolute;top:10px;right:10px;}
+
+/* Setup config Supabase */
+.setup-box{background:var(--accent-s);border:1px solid var(--accent-b);border-radius:12px;padding:1.2rem 1.4rem;margin-bottom:1.5rem;}
+.setup-box h4{color:var(--accent);font-weight:700;margin-bottom:.5rem;font-size:.95rem;}
+.setup-box p{font-size:.83rem;color:var(--muted);line-height:1.65;margin-bottom:.8rem;}
+.setup-inputs{display:flex;flex-direction:column;gap:8px;margin-bottom:.8rem;}
+.setup-input{padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:.82rem;outline:none;transition:border-color .15s;background:var(--white);color:var(--text);}
+.setup-input:focus{border-color:var(--accent-b);}
+.setup-input::placeholder{color:var(--muted2);}
+.setup-status{font-size:.78rem;padding:6px 12px;border-radius:6px;font-weight:500;}
+.setup-ok{background:var(--green-s);color:var(--green);border:1px solid var(--green-b);}
+.setup-err{background:var(--red-s);color:var(--red);border:1px solid var(--red-b);}
+.setup-warn{background:var(--yellow-s);color:var(--yellow);border:1px solid var(--yellow-b);}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:16px;padding:1.8rem;width:100%;max-width:460px;box-shadow:var(--shadow-md);animation:fadeUp .25s ease;}
+.modal h3{font-size:1.1rem;font-weight:700;margin-bottom:1rem;}
+.modal input,.modal textarea{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:.88rem;outline:none;margin-bottom:.8rem;transition:border-color .15s;color:var(--text);}
+.modal input:focus,.modal textarea:focus{border-color:var(--accent-b);}
+.modal textarea{resize:vertical;min-height:70px;}
+.modal label{font-size:.8rem;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;}
+
+/* ══════════════════════════════
+   WIZARD
+══════════════════════════════ */
+.wiz-chip{display:inline-flex;align-items:center;gap:6px;background:var(--accent-s);border:1px solid var(--accent-b);color:var(--accent);font-size:.75rem;font-weight:600;padding:4px 12px;border-radius:100px;margin-bottom:1rem;letter-spacing:.03em;}
+.wiz-title{font-size:clamp(1.3rem,3vw,1.8rem);font-weight:800;letter-spacing:-.02em;margin-bottom:.5rem;}
+.wiz-sub{color:var(--muted);font-size:.93rem;margin-bottom:1.8rem;max-width:600px;}
+.choice-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-bottom:1.8rem;}
+.choice-card{background:var(--white);border:2px solid var(--border);border-radius:14px;padding:1.2rem 1.4rem;cursor:pointer;transition:all .18s;display:flex;flex-direction:column;gap:6px;user-select:none;}
+.choice-card:hover{border-color:var(--accent-b);background:var(--accent-s);transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.choice-card.selected{border-color:var(--accent);background:var(--accent-s);box-shadow:0 0 0 3px rgba(37,99,235,.1);}
+.choice-card .icon{font-size:1.5rem;margin-bottom:3px;}
+.choice-card .ct{font-weight:700;font-size:.93rem;}
+.choice-card .cd{font-size:.79rem;color:var(--muted);line-height:1.5;}
+.choice-card .ck{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);margin-left:auto;margin-top:auto;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;font-size:.65rem;}
+.choice-card.selected .ck{background:var(--accent);border-color:var(--accent);color:#fff;}
+.pdiv{display:flex;align-items:center;gap:12px;margin:1.8rem 0 1.2rem;}
+.pdiv::before,.pdiv::after{content:'';flex:1;height:1px;background:var(--border);}
+.plabel{font-size:.73rem;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;}
+.info-box{background:var(--accent-s);border:1px solid var(--accent-b);border-radius:12px;padding:1rem 1.2rem;font-size:.84rem;color:var(--accent);line-height:1.65;margin-bottom:1.5rem;display:flex;gap:10px;}
+
+/* ══════════════════════════════
+   TELA PRINCIPAL (OBJETIVOS)
+══════════════════════════════ */
+.ctx-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.2rem;}
+.ctx-tag{font-size:.74rem;font-weight:600;padding:4px 12px;border-radius:100px;background:var(--accent-s);border:1px solid var(--accent-b);color:var(--accent);}
+.summary-panel{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:1.4rem;margin-bottom:1.5rem;box-shadow:var(--shadow);}
+.summary-title{font-weight:700;font-size:.95rem;margin-bottom:1rem;}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:1rem;}
+.kpi{text-align:center;padding:10px 6px;border-radius:10px;border:1px solid var(--border);background:var(--bg);}
+.kpi-num{font-size:1.5rem;font-weight:800;letter-spacing:-.03em;}
+.kpi-lbl{font-size:.7rem;color:var(--muted);margin-top:2px;}
+.big-bar-lbl{display:flex;justify-content:space-between;font-size:.77rem;color:var(--muted);margin-bottom:4px;}
+.big-bar{height:10px;background:var(--border);border-radius:5px;overflow:hidden;}
+.big-bar-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--accent),#7c3aed);transition:width .6s;}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.2rem;align-items:center;}
+.f-chip{padding:5px 13px;border-radius:100px;border:1px solid var(--border);background:var(--white);font-size:.77rem;font-weight:600;cursor:pointer;transition:all .15s;color:var(--muted);}
+.f-chip.active{border-color:var(--accent);background:var(--accent-s);color:var(--accent);}
+.f-chip:hover{border-color:var(--accent-b);color:var(--accent);}
+.f-search{flex:1;min-width:160px;max-width:240px;padding:6px 11px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:.82rem;outline:none;transition:border-color .15s;background:var(--white);color:var(--text);}
+.f-search:focus{border-color:var(--accent-b);}
+.f-search::placeholder{color:var(--muted2);}
+
+/* Domínios */
+.domain-section{margin-bottom:1.5rem;}
+.domain-header{display:flex;align-items:center;gap:12px;padding:11px 15px;border-radius:12px;margin-bottom:8px;cursor:pointer;user-select:none;transition:opacity .15s;}
+.domain-header:hover{opacity:.88;}
+.domain-badge{font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:6px;letter-spacing:.05em;flex-shrink:0;}
+.domain-name{font-weight:700;font-size:.97rem;}
+.domain-tagline{font-size:.77rem;opacity:.82;margin-top:1px;}
+.domain-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.dom-mini-bar{width:70px;height:5px;background:rgba(255,255,255,.3);border-radius:3px;overflow:hidden;}
+.dom-mini-bar-fill{height:100%;border-radius:3px;background:rgba(255,255,255,.85);transition:width .5s;}
+.dom-pct{font-size:.73rem;font-weight:700;white-space:nowrap;}
+.dom-chev{font-size:.78rem;transition:transform .2s;}
+.domain-section.collapsed .dom-chev{transform:rotate(-90deg);}
+.domain-section.collapsed .domain-body{display:none;}
+.domain-explain{border-radius:10px;padding:9px 13px;margin-bottom:9px;font-size:.81rem;line-height:1.65;}
+
+/* Objetivo card */
+.obj-card{background:var(--white);border:1px solid var(--border);border-radius:12px;margin-bottom:7px;overflow:hidden;transition:box-shadow .18s;}
+.obj-card:hover{box-shadow:var(--shadow);}
+.obj-card.done{opacity:.7;}
+.obj-card.na{opacity:.42;}
+.obj-hdr{display:flex;align-items:center;gap:11px;padding:12px 14px;cursor:pointer;user-select:none;}
+.obj-code{font-size:.69rem;font-weight:700;padding:3px 8px;border-radius:6px;flex-shrink:0;font-family:'Fira Code',monospace;}
+.obj-tit{flex:1;min-width:0;}
+.obj-tit-main{font-weight:600;font-size:.88rem;}
+.obj-tit-sub{font-size:.74rem;color:var(--muted);margin-top:1px;}
+.obj-pill{font-size:.7rem;font-weight:600;padding:3px 9px;border-radius:100px;border:1px solid;white-space:nowrap;flex-shrink:0;}
+.p-none{color:var(--muted2);border-color:var(--border);background:transparent;}
+.p-doing{color:var(--yellow);border-color:var(--yellow-b);background:var(--yellow-s);}
+.p-done{color:var(--green);border-color:var(--green-b);background:var(--green-s);}
+.p-na{color:var(--muted2);border-color:var(--border);background:var(--bg);}
+.obj-chev{color:var(--muted2);font-size:.78rem;transition:transform .2s;flex-shrink:0;}
+.obj-card.expanded .obj-chev{transform:rotate(90deg);}
+.obj-body{display:none;border-top:1px solid var(--border2);background:#fafbfd;padding:1.1rem 1.3rem 1.3rem;animation:fadeUp .18s ease;}
+.obj-card.expanded .obj-body{display:block;}
+.obj-what{font-size:.84rem;color:var(--text);line-height:1.7;margin-bottom:.9rem;padding:9px 13px;background:var(--white);border-radius:8px;border:1px solid var(--border2);}
+.ev-label{font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;}
+.ev-q{font-size:.88rem;font-weight:600;margin-bottom:9px;line-height:1.5;}
+.ev-btns{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;}
+.ev-btn{padding:7px 14px;border-radius:8px;border:2px solid var(--border);background:var(--white);font-family:inherit;font-size:.81rem;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;}
+.ev-btn:hover{border-color:var(--accent-b);background:var(--accent-s);}
+.ev-btn.ev-sim.act{border-color:var(--green);background:var(--green-s);color:var(--green);}
+.ev-btn.ev-nao.act{border-color:var(--red);background:var(--red-s);color:var(--red);}
+.ev-btn.ev-parc.act{border-color:var(--yellow);background:var(--yellow-s);color:var(--yellow);}
+.ev-btn.ev-nsei.act{border-color:var(--muted2);background:var(--bg);color:var(--muted);}
+.gap-box{display:none;margin-top:7px;padding:11px 13px;border-radius:10px;font-size:.82rem;line-height:1.65;border:1px solid;}
+.gap-box.show{display:block;animation:fadeUp .2s ease;}
+.gap-sim{background:var(--green-s);border-color:var(--green-b);color:#065f46;}
+.gap-nao{background:var(--red-s);border-color:var(--red-b);color:#991b1b;}
+.gap-parc{background:var(--yellow-s);border-color:var(--yellow-b);color:#92400e;}
+.gap-nsei{background:var(--bg);border-color:var(--border);color:var(--muted);}
+.gap-tit{font-weight:700;margin-bottom:3px;}
+.evid-row{display:flex;align-items:center;gap:9px;margin-top:9px;flex-wrap:wrap;}
+.evid-lbl{font-size:.79rem;color:var(--muted);font-weight:500;}
+.evid-btn{padding:5px 13px;border-radius:8px;border:1px solid var(--border);background:var(--white);font-family:inherit;font-size:.77rem;font-weight:600;cursor:pointer;transition:all .15s;}
+.evid-btn.ev-yes.act{background:var(--green-s);border-color:var(--green-b);color:var(--green);}
+.evid-btn.ev-no.act{background:var(--yellow-s);border-color:var(--yellow-b);color:var(--yellow);}
+.evid-btn:hover{border-color:var(--accent-b);}
+.card-acts{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--border2);align-items:center;}
+.act-lbl{font-size:.77rem;color:var(--muted);font-weight:600;}
+.act-btn{padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:var(--white);font-family:inherit;font-size:.77rem;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;}
+.act-btn:hover{border-color:var(--accent-b);background:var(--accent-s);}
+.act-btn.a-doing.act{background:var(--yellow-s);border-color:var(--yellow-b);color:var(--yellow);}
+.act-btn.a-done.act{background:var(--green-s);border-color:var(--green-b);color:var(--green);}
+.act-btn.a-na.act{background:var(--bg);border-color:var(--border);color:var(--muted2);}
+.note-inp{margin-top:9px;width:100%;padding:7px 11px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:.81rem;color:var(--text);background:var(--white);outline:none;resize:none;transition:border-color .15s;}
+.note-inp:focus{border-color:var(--accent-b);}
+.note-inp::placeholder{color:var(--muted2);}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-right:5px;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--text);color:#fff;padding:11px 18px;border-radius:10px;font-size:.83rem;font-weight:500;box-shadow:var(--shadow-md);z-index:999;opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.wrap{padding:1rem 1rem 3rem;}.topbar-right .proj-name-top{display:none;}.kpi-grid{grid-template-columns:repeat(3,1fr);}}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-brand" onclick="showPage('projects')">
+    <span class="badge">COBIT 2019</span>
+    <span>Governança de TI</span>
+  </div>
+  <div class="topbar-right">
+    <span class="proj-name-top" id="top-proj-name" style="display:none"></span>
+    <span class="top-pct" id="top-pct" style="display:none"></span>
+    <button class="btn btn-ghost btn-sm" id="btn-back-proj" style="display:none" onclick="showPage('projects')">← Projetos</button>
+    <span id="sync-indicator" style="display:none;font-size:.75rem;color:var(--muted);"><span class="sync-dot"></span>Sincronizado</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PÁGINA: PROJETOS
+══════════════════════════════════════════ -->
+<div class="page active" id="page-projects">
+<div class="wrap">
+
+  <!-- Config Supabase -->
+  <div class="setup-box" id="supabase-setup" style="display:none">
+    <h4>⚙️ Configurar Banco de Dados na Nuvem (Supabase)</h4>
+    <p>Para que <strong>vários usuários acessem os mesmos projetos</strong>, você precisa de um banco de dados gratuito na nuvem. Siga os 3 passos abaixo — leva menos de 5 minutos:</p>
+    <ol style="font-size:.82rem;color:var(--muted);margin-left:1.2rem;line-height:2;margin-bottom:.8rem;">
+      <li>Acesse <strong style="color:var(--accent)">supabase.com</strong> → crie conta grátis → crie um projeto</li>
+      <li>Vá em <strong>SQL Editor</strong> → rode o SQL no botão abaixo para criar as tabelas</li>
+      <li>Vá em <strong>Settings → API</strong> → copie a URL e a chave <em>anon public</em> abaixo</li>
+    </ol>
+    <div style="margin-bottom:.8rem;">
+      <button class="btn btn-ghost btn-sm" onclick="copySQL()">📋 Copiar SQL para criar tabelas</button>
+    </div>
+    <div class="setup-inputs">
+      <input class="setup-input" id="sb-url" placeholder="URL do projeto Supabase (ex: https://xyzxyz.supabase.co)" oninput="saveConfig()">
+      <input class="setup-input" id="sb-key" placeholder="Chave anon public" oninput="saveConfig()">
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <button class="btn btn-primary btn-sm" onclick="testConnection()">🔌 Testar conexão</button>
+      <button class="btn btn-ghost btn-sm" onclick="useLocalMode()">💾 Usar só neste computador (offline)</button>
+      <span id="conn-status" class="setup-status" style="display:none"></span>
+    </div>
+  </div>
+
+  <div class="projects-header">
+    <div>
+      <div class="projects-title">📁 Meus Projetos COBIT</div>
+      <div style="font-size:.82rem;color:var(--muted);margin-top:2px;" id="proj-count">Carregando projetos...</div>
+    </div>
+    <button class="btn btn-primary" onclick="openNewProjModal()">+ Novo Projeto</button>
+  </div>
+
+  <div class="projects-grid" id="projects-grid">
+    <div class="proj-card new-card" onclick="openNewProjModal()">
+      <span style="font-size:1.4rem">+</span>
+      <span>Novo Projeto</span>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PÁGINA: WIZARD — PASSO 1 (OBJETIVO)
+══════════════════════════════════════════ -->
+<div class="page" id="page-wiz1">
+<div class="wrap">
+  <div class="wiz-chip">📍 Passo 1 de 2</div>
+  <div class="wiz-title">Qual é o principal objetivo deste projeto?</div>
+  <div class="wiz-sub">Escolha a opção que mais representa o que sua organização quer alcançar com este projeto de governança.</div>
+
+  <div class="choice-grid" id="goal-grid">
+    <div class="choice-card" onclick="selectWizVal('goal','compliance',this)"><div class="icon">⚖️</div><div class="ct">Conformidade e Regulação</div><div class="cd">Atender LGPD, ISO, auditorias e normas do setor</div><div class="ck"></div></div>
+    <div class="choice-card" onclick="selectWizVal('goal','risk',this)"><div class="icon">🛡️</div><div class="ct">Gestão de Riscos</div><div class="cd">Identificar e reduzir riscos de TI que impactam o negócio</div><div class="ck"></div></div>
+    <div class="choice-card" onclick="selectWizVal('goal','digital',this)"><div class="icon">🚀</div><div class="ct">Transformação Digital</div><div class="cd">Modernizar processos e usar TI como motor de inovação</div><div class="ck"></div></div>
+    <div class="choice-card" onclick="selectWizVal('goal','efficiency',this)"><div class="icon">⚙️</div><div class="ct">Eficiência Operacional</div><div class="cd">Reduzir custos e otimizar recursos de TI</div><div class="ck"></div></div>
+    <div class="choice-card" onclick="selectWizVal('goal','security',this)"><div class="icon">🔒</div><div class="ct">Segurança da Informação</div><div class="cd">Proteger dados e sistemas contra ameaças</div><div class="ck"></div></div>
+    <div class="choice-card" onclick="selectWizVal('goal','strategy',this)"><div class="icon">🎯</div><div class="ct">Alinhamento Estratégico</div><div class="cd">Garantir que a TI suporte a estratégia do negócio</div><div class="ck"></div></div>
+  </div>
+
+  <div class="pdiv"><span class="plabel">Porte da organização</span></div>
+  <div class="choice-grid" id="size-grid">
+    <div class="choice-card" onclick="selectWizVal('size','small',this)"><div class="icon">🏪</div><div class="ct">Pequena</div><div class="cd">Até 250 funcionários</div><div class="ck"></div></div>
+    <div class="choice-card" onclick="selectWizVal('size','medium',this)"><div class="icon">🏢</div><div class="ct">Média</div><div class="cd">250 a 1.000 funcionários</div><div class="ck"></div></div>
+    <div class="choice-card" onclick="selectWizVal('size','large',this)"><div class="icon">🏙️</div><div class="ct">Grande</div><div class="cd">Acima de 1.000 funcionários</div><div class="ck"></div></div>
+  </div>
+
+  <div class="pdiv"><span class="plabel">Maturidade atual em governança de TI</span></div>
+  <div class="choice-grid" id="mat-grid">
+    <div class="choice-card" onclick="selectWizVal('maturity','inicial',this)"><div class="icon">🌱</div><div class="ct">Iniciando</div><div class="cd">Quase nenhuma prática formal ainda</div><div class="ck"></div></div>
+    <div class="choice-card" onclick="selectWizVal('maturity','parcial',this)"><div class="icon">🌿</div><div class="ct">Em desenvolvimento</div><div class="cd">Algumas práticas, mas inconsistentes</div><div class="ck"></div></div>
+    <div class="choice-card" onclick="selectWizVal('maturity','madura',this)"><div class="icon">🌳</div><div class="ct">Estruturada</div><div class="cd">Processos documentados e seguidos</div><div class="ck"></div></div>
+  </div>
+
+  <div class="btn-row" style="margin-top:1rem">
+    <button class="btn btn-ghost" onclick="showPage('projects')">← Cancelar</button>
+    <button class="btn btn-primary" id="btn-start-wiz" onclick="saveWizAndStart()" disabled>Iniciar avaliação →</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PÁGINA: AVALIAÇÃO (OBJETIVOS)
+══════════════════════════════════════════ -->
+<div class="page" id="page-main">
+<div class="wrap">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.8rem;">
+    <div>
+      <div style="font-size:1.3rem;font-weight:800;letter-spacing:-.02em;" id="main-proj-title">Projeto</div>
+      <div class="ctx-tags" id="ctx-tags" style="margin-bottom:0;margin-top:6px;"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost btn-sm" onclick="exportWord()">📄 Exportar Word</button>
+      <button class="btn btn-ghost btn-sm" onclick="showPage('projects')">← Projetos</button>
+    </div>
+  </div>
+
+  <!-- Painel de progresso -->
+  <div class="summary-panel">
+    <div class="summary-title">📊 Progresso da Implementação</div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-num" id="k-total" style="color:var(--accent)">40</div><div class="kpi-lbl">Total</div></div>
+      <div class="kpi"><div class="kpi-num" id="k-done" style="color:var(--green)">0</div><div class="kpi-lbl">Implementados</div></div>
+      <div class="kpi"><div class="kpi-num" id="k-doing" style="color:var(--yellow)">0</div><div class="kpi-lbl">Em andamento</div></div>
+      <div class="kpi"><div class="kpi-num" id="k-gap" style="color:var(--red)">0</div><div class="kpi-lbl">Lacunas</div></div>
+      <div class="kpi"><div class="kpi-num" id="k-na" style="color:var(--muted2)">0</div><div class="kpi-lbl">N/A</div></div>
+    </div>
+    <div class="big-bar-lbl"><span>Percentual de implementação</span><span id="k-pct" style="font-weight:700;color:var(--accent)">0%</span></div>
+    <div class="big-bar"><div class="big-bar-fill" id="k-bar" style="width:0%"></div></div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filter-bar">
+    <input class="f-search" type="text" placeholder="🔍 Buscar..." oninput="applyFilter()" id="f-search">
+    <button class="f-chip active" onclick="setFilter('all',this)">Todos</button>
+    <button class="f-chip" onclick="setFilter('gap',this)">🔴 Lacunas</button>
+    <button class="f-chip" onclick="setFilter('doing',this)">🟡 Em andamento</button>
+    <button class="f-chip" onclick="setFilter('done',this)">🟢 Implementados</button>
+    <button class="f-chip" onclick="setFilter('none',this)">⚪ Não avaliados</button>
+  </div>
+
+  <div id="domains-list"></div>
+</div>
+</div>
+
+<!-- MODAL: NOVO PROJETO -->
+<div class="modal-overlay" id="modal-new">
+  <div class="modal">
+    <h3>➕ Novo Projeto COBIT</h3>
+    <label>Nome do projeto *</label>
+    <input id="new-proj-name" placeholder="Ex: Governança TI 2025 — Empresa XYZ" maxlength="80">
+    <label>Descrição (opcional)</label>
+    <textarea id="new-proj-desc" placeholder="Ex: Avaliação inicial de conformidade para auditoria ISO 27001" rows="3"></textarea>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="createProject()">Criar Projeto</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-new')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: RENOMEAR -->
+<div class="modal-overlay" id="modal-rename">
+  <div class="modal">
+    <h3>✏️ Renomear Projeto</h3>
+    <label>Novo nome</label>
+    <input id="rename-input" placeholder="Nome do projeto">
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="confirmRename()">Salvar</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-rename')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// DADOS COBIT 2019
+// ══════════════════════════════════════════════════════════
+const DOMAINS=[
+  {id:'EDM',cor:'#7c3aed',soft:'#f5f3ff',border:'#ddd6fe',nome:'Avaliar, Dirigir e Monitorar',tagline:'Governança em nível de diretoria',explicacao:'É a parte da governança que envolve a <strong>alta direção</strong> (conselho, diretoria). Define como a organização toma decisões sobre TI, garante retorno dos investimentos e gerencia riscos estratégicos.'},
+  {id:'APO',cor:'#0891b2',soft:'#ecfeff',border:'#a5f3fc',nome:'Alinhar, Planejar e Organizar',tagline:'Estratégia e planejamento da TI',explicacao:'Abrange o <strong>planejamento e organização</strong> da TI: estratégia, arquitetura, inovação, budget, gestão de pessoas, contratos, qualidade, segurança e dados.'},
+  {id:'BAI',cor:'#d97706',soft:'#fffbeb',border:'#fde68a',nome:'Construir, Adquirir e Implementar',tagline:'Projetos e entrega de soluções',explicacao:'Trata de <strong>projetos e construção de soluções</strong>: como novos sistemas são desenvolvidos, comprados ou implantados. Inclui gestão de mudanças, configuração e projetos.'},
+  {id:'DSS',cor:'#db2777',soft:'#fdf2f8',border:'#fbcfe8',nome:'Entregar, Servir e Suportar',tagline:'Operações do dia a dia da TI',explicacao:'É a <strong>operação diária da TI</strong>: garantir que os sistemas rodem, chamados sejam atendidos, problemas resolvidos e dados dos negócios controlados.'},
+  {id:'MEA',cor:'#059669',soft:'#ecfdf5',border:'#a7f3d0',nome:'Monitorar, Avaliar e Analisar',tagline:'Controle, auditoria e conformidade',explicacao:'Responsável por <strong>monitorar e auditar</strong> a TI: verificar se os processos funcionam, se há conformidade com leis e se os controles internos são eficazes.'},
+];
+
+const OBJS=[
+  {code:'EDM01',dom:'EDM',nome:'Framework de Governança',desc:'Estrutura formal de governança de TI aprovada pela direção',q:'A organização possui um modelo formal de governança de TI aprovado pela diretoria?',sim:'✅ Excelente! Ter um framework de governança formal é a base de tudo. Certifique-se de revisá-lo periodicamente.',nao:'📋 O que precisa ser criado:\n• Política de Governança de TI aprovada pela diretoria\n• Comitê ou responsável pela governança de TI\n• Documento com papéis, responsabilidades e processos de decisão\n• Reuniões periódicas de revisão',parc:'⚠️ Complete com: aprovação formal pela diretoria, papéis claramente documentados e revisão periódica.',pri:['compliance','strategy','risk']},
+  {code:'EDM02',dom:'EDM',nome:'Entrega de Valor e Benefícios',desc:'Os investimentos em TI entregam o retorno esperado',q:'A organização acompanha se os investimentos em TI estão trazendo os benefícios esperados?',sim:'✅ Ótimo! Medir o retorno de investimentos em TI é fundamental para direcionar recursos.',nao:'📋 O que precisa ser criado:\n• KPIs de retorno por projeto de TI\n• Revisões periódicas de portfólio\n• Relatórios de valor de TI para a diretoria\n• Critérios claros de priorização de investimentos',parc:'⚠️ Complete com: indicadores formais, revisões regulares e conexão ao negócio.',pri:['strategy','efficiency']},
+  {code:'EDM03',dom:'EDM',nome:'Otimização de Riscos',desc:'Riscos de TI gerenciados dentro do apetite da organização',q:'Existe processo formal para identificar, avaliar e tratar riscos relacionados à TI?',sim:'✅ Muito bem! Gestão de riscos estruturada protege o negócio de surpresas.',nao:'📋 O que precisa ser criado:\n• Matriz de riscos de TI documentada\n• Processo de identificação e avaliação periódica\n• Apetite a risco definido pela diretoria\n• Planos de tratamento para riscos críticos',parc:'⚠️ Complete com: avaliação periódica, envolvimento da diretoria e planos de ação formais.',pri:['risk','compliance','security']},
+  {code:'EDM04',dom:'EDM',nome:'Otimização de Recursos',desc:'Recursos de TI (pessoas, tecnologia, budget) usados com eficiência',q:'Há processo para garantir que os recursos de TI sejam utilizados de forma eficiente?',sim:'✅ Ótimo! Otimizar recursos evita desperdício e libera capacidade estratégica.',nao:'📋 O que precisa ser criado:\n• Inventário de capacidades e recursos de TI\n• Planejamento de capacidade\n• Políticas de uso racional de licenças e infraestrutura\n• Métricas de eficiência operacional',parc:'⚠️ Complete com: métricas formais, planejamento e revisões periódicas.',pri:['efficiency','strategy']},
+  {code:'EDM05',dom:'EDM',nome:'Engajamento de Partes Interessadas',desc:'Comunicação e transparência com todos os envolvidos na TI',q:'A organização comunica regularmente a situação da TI para diretoria, usuários e parceiros?',sim:'✅ Ótimo! Comunicação transparente gera confiança e engajamento.',nao:'📋 O que precisa ser criado:\n• Processo formal de comunicação sobre TI\n• Mapeamento das partes interessadas\n• Reuniões de alinhamento com a diretoria\n• Canal de feedback dos usuários',parc:'⚠️ Complete com: regularidade, dashboard gerencial e canal de feedback.',pri:['strategy','compliance']},
+  {code:'APO01',dom:'APO',nome:'Framework de Gestão de TI',desc:'Políticas e princípios que orientam como a TI funciona',q:'Existem políticas documentadas que orientam como a TI deve funcionar na organização?',sim:'✅ Ótimo! Políticas claras orientam a equipe e garantem consistência.',nao:'📋 O que precisa ser criado:\n• Política de TI geral\n• Papéis e responsabilidades documentados\n• Princípios de arquitetura e uso de tecnologia\n• Processo de revisão das políticas',parc:'⚠️ Complete com: aprovação formal, divulgação e revisão periódica.',pri:['compliance','strategy']},
+  {code:'APO02',dom:'APO',nome:'Estratégia de TI',desc:'Plano estratégico de TI alinhado ao negócio',q:'Existe um Plano Estratégico de TI (PETI) formal e alinhado à estratégia do negócio?',sim:'✅ Excelente! Um PETI bem estruturado conecta TI e negócio.',nao:'📋 O que precisa ser criado:\n• PETI com horizonte de 3-5 anos\n• Mapeamento objetivos do negócio × iniciativas de TI\n• Roadmap de tecnologia e projetos\n• Processo anual de revisão do PETI',parc:'⚠️ Complete com: aprovação da diretoria, alinhamento formal ao negócio e roadmap detalhado.',pri:['strategy','digital']},
+  {code:'APO03',dom:'APO',nome:'Arquitetura Empresarial',desc:'Visão documentada da arquitetura atual e futura da TI',q:'A organização tem documentada a arquitetura atual de sistemas, dados e processos de TI?',sim:'✅ Ótimo! Conhecer a arquitetura atual é fundamental para planejamento.',nao:'📋 O que precisa ser criado:\n• Diagrama e inventário da arquitetura atual\n• Visão da arquitetura futura\n• Princípios de arquitetura\n• Processo de revisão e atualização',parc:'⚠️ Complete com: integrações documentadas, visão futura e governança de arquitetura.',pri:['digital','strategy']},
+  {code:'APO04',dom:'APO',nome:'Gestão da Inovação',desc:'Processo para identificar oportunidades de inovação em TI',q:'Existe processo para identificar e avaliar novas tecnologias e oportunidades de inovação?',sim:'✅ Ótimo! Monitorar inovações evita ficar para trás em tendências relevantes.',nao:'📋 O que precisa ser criado:\n• Processo de monitoramento de tendências tecnológicas\n• Fórum ou comitê de inovação\n• Método de avaliação de novas tecnologias\n• Projetos piloto (POC) para testar inovações',parc:'⚠️ Complete com: processo formal, envolvimento do negócio e critérios de avaliação.',pri:['digital','strategy']},
+  {code:'APO05',dom:'APO',nome:'Gestão do Portfólio',desc:'Todos os projetos e investimentos de TI gerenciados como portfólio único',q:'Há processo formal para gerenciar todos os projetos de TI como um portfólio integrado?',sim:'✅ Excelente! Gestão de portfólio evita sobreposição e garante priorização dos projetos estratégicos.',nao:'📋 O que precisa ser criado:\n• Lista unificada de todos os projetos de TI\n• Critérios de priorização\n• Processo de aprovação e alocação de budget\n• Revisões periódicas com a diretoria',parc:'⚠️ Complete com: critérios de priorização formais e visibilidade para diretoria.',pri:['strategy','efficiency']},
+  {code:'APO06',dom:'APO',nome:'Orçamento e Custos de TI',desc:'Planejamento e controle do orçamento e custos de TI',q:'Existe processo formal de planejamento, aprovação e acompanhamento do orçamento de TI?',sim:'✅ Ótimo! Controlar orçamento evita surpresas e garante previsibilidade.',nao:'📋 O que precisa ser criado:\n• Processo anual de orçamento de TI\n• Centros de custo definidos\n• Acompanhamento mensal de custos\n• Relatório de custos para a diretoria',parc:'⚠️ Complete com: categorização, controle mensal e transparência.',pri:['efficiency','compliance']},
+  {code:'APO07',dom:'APO',nome:'Recursos Humanos de TI',desc:'Equipe de TI com competências planejadas e desenvolvidas',q:'Há processo para planejar, contratar, desenvolver e reter talentos de TI?',sim:'✅ Excelente! Pessoas qualificadas são o ativo mais importante da TI.',nao:'📋 O que precisa ser criado:\n• Mapeamento de competências necessárias vs. disponíveis\n• Plano de capacitação\n• Processo de onboarding e gestão de saída\n• Avaliação de desempenho da equipe de TI',parc:'⚠️ Complete com: plano de desenvolvimento individual e avaliação de competências.',pri:['strategy','efficiency']},
+  {code:'APO08',dom:'APO',nome:'Relacionamento TI-Negócio',desc:'Relacionamento gerenciado entre TI e áreas de negócio',q:'Existe processo formal para gerenciar o relacionamento entre TI e as áreas de negócio?',sim:'✅ Ótimo! Bom relacionamento TI-negócio é fundamental para projetos bem-sucedidos.',nao:'📋 O que precisa ser criado:\n• Business Partner ou Gerente de Relacionamento\n• Reuniões periódicas TI × negócio\n• Pesquisa de satisfação dos usuários\n• Processo de coleta e priorização de demandas',parc:'⚠️ Complete com: reuniões estruturadas, pesquisa de satisfação e responsável formal.',pri:['strategy','digital']},
+  {code:'APO09',dom:'APO',nome:'Acordos de Nível de Serviço',desc:'SLAs documentados e acompanhados entre TI e negócio',q:'Existem SLAs documentados e monitorados entre a TI e as áreas de negócio?',sim:'✅ Ótimo! SLAs definem expectativas e permitem medir qualidade.',nao:'📋 O que precisa ser criado:\n• Catálogo de serviços de TI\n• SLAs por serviço\n• Processo de acompanhamento\n• Revisão e melhoria dos níveis de serviço',parc:'⚠️ Complete com: catálogo formal, SLAs documentados e dashboard de desempenho.',pri:['efficiency','compliance']},
+  {code:'APO10',dom:'APO',nome:'Gestão de Fornecedores',desc:'Fornecedores de TI selecionados, monitorados e avaliados',q:'Existe processo formal para selecionar, contratar, monitorar e avaliar fornecedores de TI?',sim:'✅ Excelente! Fornecedores bem gerenciados reduzem riscos.',nao:'📋 O que precisa ser criado:\n• Processo de homologação de fornecedores\n• Contratos com SLAs e penalidades\n• Avaliação periódica de fornecedores\n• Inventário de contratos de TI',parc:'⚠️ Complete com: critérios de avaliação formais e revisões periódicas.',pri:['risk','compliance']},
+  {code:'APO11',dom:'APO',nome:'Gestão de Qualidade',desc:'Processos e entregas de TI com padrões de qualidade',q:'Existe processo de gestão da qualidade em TI (padrões, revisões, melhoria contínua)?',sim:'✅ Ótimo! Qualidade em TI reduz retrabalho e aumenta a satisfação.',nao:'📋 O que precisa ser criado:\n• Padrões de qualidade para processos e entregas\n• Processo de revisão e inspeção\n• Métricas de qualidade\n• Programa de melhoria contínua',parc:'⚠️ Complete com: métricas formais, revisões periódicas e programa de melhoria.',pri:['efficiency','compliance']},
+  {code:'APO12',dom:'APO',nome:'Gestão de Riscos de TI',desc:'Registro e tratamento dos riscos específicos de TI',q:'Existe uma matriz de riscos de TI atualizada, com planos de tratamento para cada risco?',sim:'✅ Excelente! Boa gestão de riscos previne incidentes.',nao:'📋 O que precisa ser criado:\n• Registro de riscos de TI\n• Processo de identificação e avaliação\n• Planos de tratamento\n• Relatório de riscos para a diretoria',parc:'⚠️ Complete com: atualização periódica, planos de ação e reporte.',pri:['risk','security','compliance']},
+  {code:'APO13',dom:'APO',nome:'Segurança da Informação',desc:'Política de segurança e programa ativo de proteção',q:'Existe Política de Segurança da Informação aprovada e programa de segurança ativo?',sim:'✅ Ótimo! Segurança é crítica em qualquer organização moderna.',nao:'📋 O que precisa ser criado:\n• Política de Segurança da Informação (PSI)\n• Classificação de informações\n• Programa de conscientização\n• Gestão de vulnerabilidades e patches',parc:'⚠️ Complete com: aprovação formal da PSI, treinamentos e programa de vulnerabilidades.',pri:['security','compliance','risk']},
+  {code:'APO14',dom:'APO',nome:'Gestão de Dados',desc:'Dados gerenciados com qualidade, segurança e conformidade (LGPD)',q:'Existe processo formal de governança de dados (qualidade, privacidade, LGPD)?',sim:'✅ Excelente! Com a LGPD, governança de dados é essencial.',nao:'📋 O que precisa ser criado:\n• Inventário e mapeamento de dados\n• Política de privacidade (LGPD)\n• Data Owner por domínio\n• Processo de qualidade e ciclo de vida dos dados',parc:'⚠️ Complete com: mapeamento completo, política de privacidade e responsáveis formais.',pri:['compliance','security','risk']},
+  {code:'BAI01',dom:'BAI',nome:'Gestão de Programas',desc:'Programas com múltiplos projetos coordenados',q:'Programas de mudança de grande escala são coordenados de forma integrada?',sim:'✅ Ótimo! Programas bem gerenciados garantem valor conjunto.',nao:'📋 O que precisa ser criado:\n• Metodologia de gestão de programas\n• Governança (comitê, sponsor)\n• Acompanhamento de interdependências\n• Relatório consolidado de programas',parc:'⚠️ Complete com: governança formal e visibilidade de interdependências.',pri:['digital','strategy']},
+  {code:'BAI02',dom:'BAI',nome:'Gestão de Requisitos',desc:'Requisitos de sistemas levantados, aprovados e rastreados',q:'Existe processo formal para documentar, aprovar e rastrear requisitos de projetos de TI?',sim:'✅ Ótimo! Requisitos bem definidos reduzem retrabalho.',nao:'📋 O que precisa ser criado:\n• Processo de elicitação e documentação\n• Templates de especificação\n• Aprovação dos requisitos pelo negócio\n• Rastreabilidade ao longo do projeto',parc:'⚠️ Complete com: aprovação formal, rastreabilidade e gestão de mudanças.',pri:['digital','efficiency']},
+  {code:'BAI03',dom:'BAI',nome:'Construção e Aquisição de Soluções',desc:'Soluções de TI desenvolvidas ou adquiridas de forma padronizada',q:'Existe processo padronizado para desenvolver ou adquirir soluções de TI?',sim:'✅ Excelente! Processo estruturado garante qualidade técnica.',nao:'📋 O que precisa ser criado:\n• Metodologia de desenvolvimento ou aquisição\n• Critérios de aceite técnico e funcional\n• Processo de homologação\n• Documentação técnica padrão',parc:'⚠️ Complete com: padronização, critérios de aceite e documentação.',pri:['digital','efficiency']},
+  {code:'BAI04',dom:'BAI',nome:'Disponibilidade e Capacidade',desc:'Infraestrutura monitorada para garantir disponibilidade e crescimento',q:'Há processo para monitorar e planejar disponibilidade e capacidade dos sistemas críticos?',sim:'✅ Ótimo! Monitorar capacidade garante suporte ao crescimento.',nao:'📋 O que precisa ser criado:\n• Monitoramento de disponibilidade\n• Planejamento de capacidade\n• Alertas proativos\n• Relatório de uptime dos serviços',parc:'⚠️ Complete com: monitoramento proativo e planejamento de capacidade.',pri:['efficiency','risk']},
+  {code:'BAI05',dom:'BAI',nome:'Gestão de Mudança Organizacional',desc:'Impacto humano e organizacional das mudanças de TI gerenciado',q:'Existe processo para gerenciar o impacto das mudanças de TI nas pessoas e processos?',sim:'✅ Excelente! A maioria dos fracassos em TI é por falta de gestão de mudança.',nao:'📋 O que precisa ser criado:\n• Plano de gestão de mudança para projetos\n• Comunicação e engajamento dos impactados\n• Plano de treinamento\n• Avaliação da adoção pós-implantação',parc:'⚠️ Complete com: plano de mudança formal, treinamentos e acompanhamento.',pri:['digital','strategy']},
+  {code:'BAI06',dom:'BAI',nome:'Controle de Mudanças de TI',desc:'Todas as mudanças em sistemas passam por processo formal de aprovação',q:'Todas as mudanças em sistemas e infraestrutura passam por aprovação e controle formal?',sim:'✅ Ótimo! Controle de mudanças evita incidentes por alterações não autorizadas.',nao:'📋 O que precisa ser criado:\n• Processo formal de gestão de mudanças\n• Comitê de Aprovação (CAB)\n• Categorização de mudanças\n• Registro de todas as mudanças',parc:'⚠️ Complete com: comitê de aprovação, categorização e registro completo.',pri:['risk','security','compliance']},
+  {code:'BAI07',dom:'BAI',nome:'Aceite e Transição para Produção',desc:'Novas soluções aceitas e implantadas de forma controlada',q:'Existe processo formal de homologação, aceite do usuário e go-live controlado?',sim:'✅ Excelente! Transições planejadas evitam incidentes no go-live.',nao:'📋 O que precisa ser criado:\n• User Acceptance Testing (UAT)\n• Checklist de go-live\n• Plano de rollback\n• Handover para a operação',parc:'⚠️ Complete com: UAT formal, critérios de aceite e plano de rollback.',pri:['efficiency','risk']},
+  {code:'BAI08',dom:'BAI',nome:'Gestão do Conhecimento',desc:'Conhecimento sobre TI capturado, mantido e compartilhado',q:'Existe base de conhecimento onde a equipe de TI documenta e compartilha informações?',sim:'✅ Ótimo! Conhecimento documentado reduz dependência de pessoas-chave.',nao:'📋 O que precisa ser criado:\n• Base de conhecimento (wiki, Confluence, etc.)\n• Lições aprendidas por projeto\n• Repositório de documentação técnica\n• Curadoria e atualização do conhecimento',parc:'⚠️ Complete com: processo de atualização e responsável pelo conhecimento.',pri:['efficiency','strategy']},
+  {code:'BAI09',dom:'BAI',nome:'Gestão de Ativos de TI',desc:'Hardware, software e licenças inventariados e controlados',q:'Existe inventário atualizado e processo de gestão do ciclo de vida dos ativos de TI?',sim:'✅ Excelente! Controlar ativos evita custos desnecessários e problemas de licença.',nao:'📋 O que precisa ser criado:\n• Inventário de hardware e software\n• Controle de licenças\n• Gestão do ciclo de vida dos equipamentos\n• Ferramenta de discovery',parc:'⚠️ Complete com: inventário automatizado, controle de licenças e descarte seguro.',pri:['compliance','efficiency']},
+  {code:'BAI10',dom:'BAI',nome:'Gestão de Configurações',desc:'Repositório preciso das configurações e relações entre itens de TI',q:'Existe banco de dados de configuração (CMDB) com os itens de TI e suas relações?',sim:'✅ Ótimo! CMDB preciso acelera resolução de incidentes.',nao:'📋 O que precisa ser criado:\n• CMDB (pode ser simples no início)\n• Atualização após mudanças\n• Integração com incidentes e mudanças\n• Auditoria periódica das configurações',parc:'⚠️ Complete com: processo de atualização contínua e integração.',pri:['efficiency','risk']},
+  {code:'BAI11',dom:'BAI',nome:'Gestão de Projetos',desc:'Projetos de TI gerenciados com metodologia formal',q:'Existe metodologia formal de gestão de projetos de TI adotada na organização?',sim:'✅ Excelente! Gestão de projetos reduz atrasos e estouros de orçamento.',nao:'📋 O que precisa ser criado:\n• Metodologia (PMI, PRINCE2, ágil, etc.)\n• Templates de plano, riscos e status\n• PMO ou responsável pela metodologia\n• Lições aprendidas ao final dos projetos',parc:'⚠️ Complete com: padronização, PMO estruturado e lições aprendidas.',pri:['digital','efficiency','strategy']},
+  {code:'DSS01',dom:'DSS',nome:'Operações de TI',desc:'Operação diária da TI com procedimentos padronizados',q:'Existe processo estruturado para a operação diária da TI (monitoramento, rotinas, POPs)?',sim:'✅ Ótimo! Operações estruturadas garantem estabilidade.',nao:'📋 O que precisa ser criado:\n• Procedimentos Operacionais Padrão (POPs)\n• Monitoramento proativo\n• Runbooks de emergência\n• Gestão de janelas de manutenção',parc:'⚠️ Complete com: POPs documentados, monitoramento automatizado e runbooks.',pri:['efficiency','risk']},
+  {code:'DSS02',dom:'DSS',nome:'Incidentes e Requisições',desc:'Service Desk gerenciando chamados dos usuários',q:'Existe Service Desk ou processo formal para registrar e resolver incidentes dos usuários?',sim:'✅ Excelente! Service Desk reduz impacto de falhas no negócio.',nao:'📋 O que precisa ser criado:\n• Ferramenta de chamados (Service Desk)\n• Processo de triagem, priorização e escalonamento\n• SLAs de atendimento por prioridade\n• Base de conhecimento de resolução',parc:'⚠️ Complete com: SLAs definidos, base de conhecimento e escalonamento.',pri:['efficiency','compliance']},
+  {code:'DSS03',dom:'DSS',nome:'Gestão de Problemas',desc:'Causa raiz de incidentes recorrentes identificada e eliminada',q:'Existe processo para investigar a causa raiz de incidentes recorrentes e eliminá-los?',sim:'✅ Ótimo! Resolver a causa raiz é mais eficiente que apagar o mesmo incêndio.',nao:'📋 O que precisa ser criado:\n• Processo de gestão de problemas\n• Técnicas de análise de causa raiz (RCA)\n• Registro de erros conhecidos\n• Eliminação definitiva de causas raiz',parc:'⚠️ Complete com: processo separado de problemas, técnicas de RCA e registro.',pri:['efficiency','risk']},
+  {code:'DSS04',dom:'DSS',nome:'Continuidade de Negócio e TI',desc:'Plano de recuperação de desastres para serviços críticos de TI',q:'Existe Plano de Continuidade de Negócio (PCN) ou Plano de Recuperação de Desastres (DRP)?',sim:'✅ Excelente! Preparação para desastres é crítica no mundo digital.',nao:'📋 O que precisa ser criado:\n• Análise de Impacto (BIA) dos sistemas críticos\n• DRP com RTO e RPO definidos\n• Backup e testes de restauração periódicos\n• Testes e simulações do plano',parc:'⚠️ Complete com: testes periódicos, RTO/RPO formalizados e plano atualizado.',pri:['risk','compliance','security']},
+  {code:'DSS05',dom:'DSS',nome:'Serviços de Segurança Operacional',desc:'Controles de segurança ativos protegendo sistemas e dados',q:'Existem controles de segurança operacional ativos (antivírus, firewall, controle de acessos)?',sim:'✅ Ótimo! Controles operacionais são a primeira linha de defesa.',nao:'📋 O que precisa ser criado:\n• Controles básicos: antivírus, firewall, patches\n• Gestão de identidades e acessos (IAM)\n• Monitoramento de segurança (logs, alertas)\n• Processo de resposta a incidentes de segurança',parc:'⚠️ Complete com: monitoramento contínuo, gestão formal de acessos e resposta a incidentes.',pri:['security','compliance','risk']},
+  {code:'DSS06',dom:'DSS',nome:'Controles de Processos de Negócio',desc:'Controles de TI garantindo integridade nos processos do negócio',q:'Os processos de negócio suportados por TI têm controles para garantir integridade e conformidade?',sim:'✅ Excelente! Controles em processos reduzem fraudes e erros.',nao:'📋 O que precisa ser criado:\n• Mapeamento dos controles de TI nos processos críticos\n• Segregação de funções nos sistemas\n• Trilhas de auditoria (logs) nos sistemas críticos\n• Revisão periódica dos controles',parc:'⚠️ Complete com: segregação, trilhas de auditoria e revisão periódica.',pri:['compliance','risk']},
+  {code:'MEA01',dom:'MEA',nome:'Monitoramento de Desempenho',desc:'KPIs e indicadores de TI monitorados e reportados',q:'Existe processo para monitorar e reportar o desempenho dos processos de TI regularmente?',sim:'✅ Ótimo! O que não é medido não é gerenciado.',nao:'📋 O que precisa ser criado:\n• KPIs de TI definidos\n• Dashboard gerencial de TI\n• Reporte periódico à diretoria\n• Acompanhamento de metas e desvios',parc:'⚠️ Complete com: KPIs formalizados, dashboard e ciclo de reporte.',pri:['compliance','strategy','efficiency']},
+  {code:'MEA02',dom:'MEA',nome:'Controles Internos de TI',desc:'Controles internos de TI avaliados periodicamente',q:'Existe processo para avaliar periodicamente se os controles internos de TI funcionam?',sim:'✅ Excelente! Avaliar controles previne resultados negativos em auditorias.',nao:'📋 O que precisa ser criado:\n• Inventário dos controles internos de TI\n• Processo de autoavaliação (CSA)\n• Plano de auditoria interna de TI\n• Remediação de deficiências',parc:'⚠️ Complete com: autoavaliação periódica, auditoria interna e remediação.',pri:['compliance','risk']},
+  {code:'MEA03',dom:'MEA',nome:'Conformidade com Leis e Regulamentos',desc:'Conformidade com LGPD e demais requisitos legais de TI',q:'Existe processo para identificar e garantir conformidade com leis e regulamentos aplicáveis à TI?',sim:'✅ Excelente! Conformidade evita multas, sanções e danos à reputação.',nao:'📋 O que precisa ser criado:\n• Inventário de leis e regulamentos aplicáveis\n• Acompanhamento de mudanças regulatórias\n• Mapeamento de controles por requisito legal\n• Reporte de conformidade para a diretoria',parc:'⚠️ Complete com: mapeamento completo, controles documentados e reporte.',pri:['compliance']},
+  {code:'MEA04',dom:'MEA',nome:'Garantia e Auditoria de TI',desc:'Auditorias independentes garantindo governança e controles',q:'A organização obtém garantia independente (auditoria) sobre sua governança e controles de TI?',sim:'✅ Ótimo! Auditoria independente dá credibilidade à governança.',nao:'📋 O que precisa ser criado:\n• Programa de auditoria de TI (interna ou externa)\n• Avaliações de maturidade periódicas\n• Reporte dos achados à diretoria\n• Plano de ação para achados de auditoria',parc:'⚠️ Complete com: programa formal, reporte e acompanhamento de planos de ação.',pri:['compliance','risk']},
+];
+
+const GOAL_LBL={compliance:'⚖️ Conformidade e Regulação',risk:'🛡️ Gestão de Riscos',digital:'🚀 Transformação Digital',efficiency:'⚙️ Eficiência Operacional',security:'🔒 Segurança da Informação',strategy:'🎯 Alinhamento Estratégico'};
+const SIZE_LBL={small:'🏪 Pequena',medium:'🏢 Média',large:'🏙️ Grande'};
+const MAT_LBL={inicial:'🌱 Maturidade Inicial',parcial:'🌿 Em Desenvolvimento',madura:'🌳 Estruturada'};
+
+// ══════════════════════════════════════════════════════════
+// SUPABASE / STORAGE
+// ══════════════════════════════════════════════════════════
+let SB_URL='https://xdreuomykmcnhqlcxwdd.supabase.co', SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkcmV1b215a21jbmhxbGN4d2RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1NDQ1MjQsImV4cCI6MjA4NzEyMDUyNH0.B9Qz-AIdmkjZAivs_cZaKYUG2t0jugpdDJWQl8JyFfY', USE_LOCAL=false;
+let CURRENT_PROJECT=null;
+let PROJECTS=[];
+
+function loadConfig(){
+  SB_URL=localStorage.getItem('cobit_sb_url')||'';
+  SB_KEY=localStorage.getItem('cobit_sb_key')||'';
+  USE_LOCAL=localStorage.getItem('cobit_local')==='1';
+  if(SB_URL) document.getElementById('sb-url').value=SB_URL;
+  if(SB_KEY) document.getElementById('sb-key').value=SB_KEY;
+  if(USE_LOCAL){
+    // setup hidden
+    document.getElementById('sync-indicator').style.display='flex';
+  }
+}
+function saveConfig(){
+  SB_URL=document.getElementById('sb-url').value.trim();
+  SB_KEY=document.getElementById('sb-key').value.trim();
+  localStorage.setItem('cobit_sb_url',SB_URL);
+  localStorage.setItem('cobit_sb_key',SB_KEY);
+}
+function useLocalMode(){
+  USE_LOCAL=true;
+  localStorage.setItem('cobit_local','1');
+  // setup hidden
+  document.getElementById('sync-indicator').style.display='flex';
+  loadProjects();
+  toast('💾 Modo local ativado. Dados salvos neste navegador.');
+}
+async function testConnection(){
+  saveConfig();
+  if(!SB_URL||!SB_KEY){setStatus('err','Preencha URL e chave primeiro.');return;}
+  setStatus('warn','Testando...');
+  try{
+    const r=await sbFetch('GET','projects?select=id&limit=1');
+    if(r.ok){setStatus('ok','✅ Conexão OK! Banco de dados conectado.');USE_LOCAL=false;localStorage.removeItem('cobit_local');document.getElementById('sync-indicator').style.display='flex';loadProjects();}
+    else{const e=await r.json();setStatus('err','Erro: '+(e.message||e.hint||'Verifique URL e chave'));}
+  }catch(e){setStatus('err','Não foi possível conectar: '+e.message);}
+}
+function setStatus(type,msg){
+  const el=document.getElementById('conn-status');
+  el.style.display='inline-block';
+  el.className='setup-status setup-'+type;
+  el.textContent=msg;
+}
+
+const SETUP_SQL=`-- Execute este SQL no Supabase SQL Editor
+CREATE TABLE IF NOT EXISTS projects (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name TEXT NOT NULL,
+  description TEXT,
+  goal TEXT, size TEXT, maturity TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE TABLE IF NOT EXISTS project_data (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
+  answers JSONB DEFAULT '{}',
+  evidence JSONB DEFAULT '{}',
+  status JSONB DEFAULT '{}',
+  notes JSONB DEFAULT '{}',
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+-- Habilitar acesso público (para modo sem login)
+ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
+ALTER TABLE project_data ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "public_all" ON projects FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "public_all" ON project_data FOR ALL USING (true) WITH CHECK (true);`;
+
+function copySQL(){
+  navigator.clipboard.writeText(SETUP_SQL).then(()=>toast('✅ SQL copiado! Cole no SQL Editor do Supabase.'));
+}
+
+async function sbFetch(method,path,body){
+  const headers={
+    'apikey':SB_KEY,
+    'Authorization':'Bearer '+SB_KEY,
+    'Content-Type':'application/json',
+    'Prefer':'return=representation',
+    'Accept':'application/json',
+    'X-Client-Info':'supabase-js/2.0.0'
+  };
+  const res=await fetch(`${SB_URL}/rest/v1/${path}`,{
+    method,
+    headers,
+    body:body?JSON.stringify(body):undefined
+  });
+  // Se resposta não for JSON válido, lança erro com status
+  if(!res.ok){
+    const txt=await res.text();
+    throw new Error(`HTTP ${res.status}: ${txt.substring(0,120)}`);
+  }
+  return res;
+}
+
+// ── PROJETOS ──
+async function loadProjects(){
+  if(USE_LOCAL){
+    PROJECTS=JSON.parse(localStorage.getItem('cobit_projects')||'[]');
+    renderProjects();return;
+  }
+  if(!SB_URL||!SB_KEY) return;
+  try{
+    const r=await sbFetch('GET','projects?select=*&order=updated_at.desc');
+    const txt=await r.text();
+    PROJECTS=(txt&&txt.trim().length>0)?JSON.parse(txt):[];
+    if(!Array.isArray(PROJECTS)) PROJECTS=[];
+    for(const p of PROJECTS){
+      try{
+        const rd=await sbFetch('GET',`project_data?project_id=eq.${p.id}&select=status`);
+        const dt=await rd.text();
+        const d=(dt&&dt.trim().length>0)?JSON.parse(dt):[];
+        if(d&&d[0]) p._status=d[0].status||{};
+      }catch(e2){p._status={};}
+    }
+    renderProjects();
+  }catch(e){console.error(e);renderProjects();}
+}
+
+function saveLocalProjects(){localStorage.setItem('cobit_projects',JSON.stringify(PROJECTS));}
+
+function renderProjects(){
+  const g=document.getElementById('projects-grid');
+  const active=PROJECTS.filter(p=>!p.deleted);
+  document.getElementById('proj-count').textContent=active.length+' projeto(s) encontrado(s)';
+  g.innerHTML='<div class="proj-card new-card" onclick="openNewProjModal()"><span style="font-size:1.4rem">+</span><span>Novo Projeto</span></div>';
+  active.forEach(p=>{
+    const st=p._status||{};
+    const done=Object.values(st).filter(v=>v==='done').length;
+    const pct=Math.round((done/40)*100);
+    const dateStr=p.updated_at?new Date(p.updated_at).toLocaleDateString('pt-BR'):'';
+    g.insertAdjacentHTML('beforeend',`
+      <div class="proj-card" id="pcard-${p.id}">
+        <div class="proj-card-header">
+          <div>
+            <div class="proj-card-name">${esc(p.name)}</div>
+            <div class="proj-card-meta">Atualizado: ${dateStr}</div>
+          </div>
+        </div>
+        ${p.goal?`<div class="proj-card-goal">${GOAL_LBL[p.goal]||p.goal}</div>`:''}
+        ${p.description?`<div style="font-size:.78rem;color:var(--muted);margin-bottom:.5rem;">${esc(p.description)}</div>`:''}
+        <div class="proj-card-bar-wrap">
+          <div class="proj-card-bar-label"><span>Implementação</span><span style="font-weight:700;color:var(--accent)">${pct}%</span></div>
+          <div class="proj-card-bar"><div class="proj-card-bar-fill" style="width:${pct}%"></div></div>
+        </div>
+        <div class="proj-actions">
+          <button class="btn btn-primary btn-sm" onclick="openProject('${p.id}')">Abrir →</button>
+          <button class="btn btn-ghost btn-sm" onclick="openRename('${p.id}')">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteProject('${p.id}')">🗑️</button>
+        </div>
+      </div>`);
+  });
+}
+
+function openNewProjModal(){
+  document.getElementById('new-proj-name').value='';
+  document.getElementById('new-proj-desc').value='';
+  document.getElementById('modal-new').classList.add('open');
+  setTimeout(()=>document.getElementById('new-proj-name').focus(),100);
+}
+
+async function createProject(){
+  const name=document.getElementById('new-proj-name').value.trim();
+  if(!name){toast('⚠️ Digite um nome para o projeto.');return;}
+  const desc=document.getElementById('new-proj-desc').value.trim();
+  closeModal('modal-new');
+  const p={id:crypto.randomUUID(),name,description:desc,goal:null,size:null,maturity:null,created_at:new Date().toISOString(),updated_at:new Date().toISOString(),_status:{}};
+  if(USE_LOCAL){
+    PROJECTS.unshift(p);saveLocalProjects();
+    localStorage.setItem('cobit_data_'+p.id,JSON.stringify({answers:{},evidence:{},status:{},notes:{}}));
+  } else {
+    try{
+      // Usar id gerado no cliente para garantir consistência
+      const payload={id:p.id,name,description:desc,goal:null,size:null,maturity:null,created_at:p.created_at,updated_at:p.updated_at};
+      await sbFetch('POST','projects',payload);
+      await sbFetch('POST','project_data',{project_id:p.id,answers:{},evidence:{},status:{},notes:{}});
+      PROJECTS.unshift(p);
+    }catch(e){toast('Erro ao criar projeto: '+e.message);console.error(e);return;}
+  }
+  renderProjects();
+  // Abrir wizard para o novo projeto
+  CURRENT_PROJECT=p;
+  openWizard();
+}
+
+async function openProject(id){
+  CURRENT_PROJECT=PROJECTS.find(p=>p.id===id);
+  if(!CURRENT_PROJECT) return;
+  // Carregar dados
+  if(USE_LOCAL){
+    const d=JSON.parse(localStorage.getItem('cobit_data_'+id)||'{"answers":{},"evidence":{},"status":{},"notes":{}}');
+    CURRENT_PROJECT._data=d;
+  } else {
+    try{
+      const r=await sbFetch('GET',`project_data?project_id=eq.${id}&select=*`);
+      const txt=await r.text();
+      const d=(txt&&txt.trim().length>0)?JSON.parse(txt):[];
+      CURRENT_PROJECT._data=d&&d[0]?d[0]:{answers:{},evidence:{},status:{},notes:{}};
+    }catch(e){CURRENT_PROJECT._data={answers:{},evidence:{},status:{},notes:{}};}
+  }
+  if(!CURRENT_PROJECT.goal){openWizard();return;}
+  showMainPage();
+}
+
+function openWizard(){
+  // Restaurar seleções se já existirem
+  ['goal','size','maturity'].forEach(k=>{
+    const v=CURRENT_PROJECT[k];
+    const grid={goal:'goal-grid',size:'size-grid',maturity:'mat-grid'}[k];
+    document.querySelectorAll(`#${grid} .choice-card`).forEach(c=>{c.classList.remove('selected');c.querySelector('.ck').textContent='';});
+    if(v){const el=document.querySelector(`#${grid} [data-val="${v}"]`);if(el){el.classList.add('selected');el.querySelector('.ck').textContent='✓';}}
+  });
+  checkWizBtn();
+  showPage('wiz1');
+}
+
+// Marcar valor no wizard
+const WIZ_VALS={goal:null,size:null,maturity:null};
+function selectWizVal(key,val,el){
+  if(CURRENT_PROJECT) CURRENT_PROJECT[key]=val;
+  WIZ_VALS[key]=val;
+  const grid={goal:'goal-grid',size:'size-grid',maturity:'mat-grid'}[key];
+  document.querySelectorAll(`#${grid} .choice-card`).forEach(c=>{c.classList.remove('selected');c.querySelector('.ck').textContent='';});
+  el.classList.add('selected');el.querySelector('.ck').textContent='✓';
+  checkWizBtn();
+}
+function checkWizBtn(){
+  const p=CURRENT_PROJECT;
+  document.getElementById('btn-start-wiz').disabled=!(p&&p.goal&&p.size&&p.maturity);
+}
+async function saveWizAndStart(){
+  if(!CURRENT_PROJECT) return;
+  const p=CURRENT_PROJECT;
+  if(USE_LOCAL){
+    saveLocalProjects();
+  } else {
+    await sbFetch('PATCH',`projects?id=eq.${p.id}`,{goal:p.goal,size:p.size,maturity:p.maturity,updated_at:new Date().toISOString()});
+  }
+  if(!p._data) p._data={answers:{},evidence:{},status:{},notes:{}};
+  showMainPage();
+}
+
+function showMainPage(){
+  document.getElementById('main-proj-title').textContent=CURRENT_PROJECT.name;
+  document.getElementById('top-proj-name').textContent=CURRENT_PROJECT.name;
+  document.getElementById('top-proj-name').style.display='';
+  document.getElementById('top-pct').style.display='';
+  document.getElementById('btn-back-proj').style.display='';
+  renderCtxTags();
+  renderDomains();
+  updateProgress();
+  showPage('main');
+}
+
+let renameId=null;
+function openRename(id){
+  renameId=id;
+  const p=PROJECTS.find(x=>x.id===id);
+  document.getElementById('rename-input').value=p.name;
+  document.getElementById('modal-rename').classList.add('open');
+  setTimeout(()=>document.getElementById('rename-input').focus(),100);
+}
+async function confirmRename(){
+  const name=document.getElementById('rename-input').value.trim();
+  if(!name) return;
+  const p=PROJECTS.find(x=>x.id===renameId);
+  p.name=name;p.updated_at=new Date().toISOString();
+  if(USE_LOCAL) saveLocalProjects();
+  else await sbFetch('PATCH',`projects?id=eq.${renameId}`,{name,updated_at:new Date().toISOString()});
+  closeModal('modal-rename');renderProjects();toast('✅ Projeto renomeado!');
+}
+async function deleteProject(id){
+  if(!confirm('Excluir este projeto? Esta ação não pode ser desfeita.')) return;
+  PROJECTS=PROJECTS.filter(p=>p.id!==id);
+  if(USE_LOCAL){saveLocalProjects();localStorage.removeItem('cobit_data_'+id);}
+  else await sbFetch('DELETE',`projects?id=eq.${id}`);
+  renderProjects();toast('🗑️ Projeto excluído.');
+}
+
+// ── SALVAR DADOS DO PROJETO ──
+let saveTimer=null;
+async function saveProjectData(){
+  if(!CURRENT_PROJECT||!CURRENT_PROJECT._data) return;
+  const d=CURRENT_PROJECT._data;
+  if(USE_LOCAL){
+    localStorage.setItem('cobit_data_'+CURRENT_PROJECT.id,JSON.stringify(d));
+    CURRENT_PROJECT._status=d.status||{};
+  } else {
+    clearTimeout(saveTimer);
+    saveTimer=setTimeout(async()=>{
+      await sbFetch('PATCH',`project_data?project_id=eq.${CURRENT_PROJECT.id}`,{answers:d.answers,evidence:d.evidence,status:d.status,notes:d.notes,updated_at:new Date().toISOString()});
+      await sbFetch('PATCH',`projects?id=eq.${CURRENT_PROJECT.id}`,{updated_at:new Date().toISOString()});
+      CURRENT_PROJECT._status=d.status||{};
+    },800);
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════════════════
+function renderCtxTags(){
+  const p=CURRENT_PROJECT;
+  const tags=[GOAL_LBL[p.goal],SIZE_LBL[p.size],MAT_LBL[p.maturity]].filter(Boolean);
+  document.getElementById('ctx-tags').innerHTML=tags.map(t=>`<span class="ctx-tag">${t}</span>`).join('');
+}
+
+function renderDomains(){
+  const d=CURRENT_PROJECT._data||{};
+  document.getElementById('domains-list').innerHTML=DOMAINS.map(dom=>{
+    const objs=OBJS.filter(o=>o.dom===dom.id);
+    const done=objs.filter(o=>(d.status||{})[o.code]==='done').length;
+    const pct=Math.round((done/objs.length)*100);
+    const priCount=objs.filter(o=>o.pri.includes(CURRENT_PROJECT.goal)).length;
+    return `<div class="domain-section" id="dom-${dom.id}">
+      <div class="domain-header" onclick="toggleDom('${dom.id}')" style="background:linear-gradient(135deg,${dom.cor}dd,${dom.cor}88);color:#fff;">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span class="domain-badge" style="background:rgba(255,255,255,.22);color:#fff;">${dom.id}</span>
+            <span class="domain-name">${dom.nome}</span>
+            ${priCount?`<span style="font-size:.69rem;background:rgba(255,255,255,.22);padding:2px 8px;border-radius:100px;font-weight:600;">⭐ ${priCount} prioritário${priCount>1?'s':''}</span>`:''}
+          </div>
+          <div class="domain-tagline">${dom.tagline}</div>
+        </div>
+        <div class="domain-right">
+          <div class="dom-mini-bar"><div class="dom-mini-bar-fill" id="dbar-${dom.id}" style="width:${pct}%"></div></div>
+          <span class="dom-pct">${done}/${objs.length}</span>
+          <span class="dom-chev">▼</span>
+        </div>
+      </div>
+      <div class="domain-body" id="dbody-${dom.id}">
+        <div class="domain-explain" style="background:${dom.soft};border:1px solid ${dom.border};color:#334155;">
+          <strong style="color:${dom.cor}">O que é ${dom.id}?</strong> ${dom.explicacao}
+        </div>
+        ${objs.map(o=>renderObjCard(o,d)).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderObjCard(o,d){
+  d=d||(CURRENT_PROJECT._data||{});
+  const st=(d.status||{})[o.code]||'none';
+  const ans=(d.answers||{})[o.code]||'';
+  const ev=(d.evidence||{})[o.code]||'';
+  const nota=(d.notes||{})[o.code]||'';
+  const dom=DOMAINS.find(x=>x.id===o.dom);
+  const isPri=o.pri.includes(CURRENT_PROJECT.goal);
+  const pillTxt={none:'Não avaliado',doing:'Em andamento',done:'Implementado ✓',na:'Não se aplica'};
+  const pillCls={none:'p-none',doing:'p-doing',done:'p-done',na:'p-na'};
+  let gapHtml='';
+  if(ans){
+    const gcls={sim:'gap-sim',nao:'gap-nao',parc:'gap-parc',nsei:'gap-nsei'}[ans];
+    const fb={sim:o.sim,nao:o.nao.replace(/\n/g,'<br>'),parc:o.parc,nsei:'🤔 Recomendação: Investigue com a equipe se este processo existe. Se não souber, considere fazer uma auditoria interna.'};
+    const tit={sim:'✅ Situação atual:',nao:'❌ Lacuna identificada — O que criar:',parc:'⚠️ Parcialmente implementado:',nsei:'🤔 Não sei informar:'};
+    gapHtml=`<div class="gap-box ${gcls} show"><div class="gap-tit">${tit[ans]}</div>${fb[ans]}</div>`;
+    if(ans==='sim'||ans==='parc'){
+      gapHtml+=`<div class="evid-row"><span class="evid-lbl">📎 Tem documentação/evidência?</span>
+        <button class="evid-btn ev-yes ${ev==='sim'?'act':''}" onclick="setEv('${o.code}','sim')">✓ Tenho</button>
+        <button class="evid-btn ev-no ${ev==='nao'?'act':''}" onclick="setEv('${o.code}','nao')">✗ Não documentado</button>
+      </div>`;
+    }
+  }
+  return `<div class="obj-card ${st}" id="card-${o.code}">
+    <div class="obj-hdr" onclick="toggleCard('${o.code}')">
+      <span class="obj-code" style="background:${dom.soft};color:${dom.cor};border:1px solid ${dom.border}">${o.code}</span>
+      <div class="obj-tit">
+        <div class="obj-tit-main">${isPri?'<span style="color:#d97706;font-size:.73rem;margin-right:3px;">⭐</span>':''}${o.nome}</div>
+        <div class="obj-tit-sub">${o.desc}</div>
+      </div>
+      <span class="obj-pill ${pillCls[st]}">${pillTxt[st]}</span>
+      <span class="obj-chev">▶</span>
+    </div>
+    <div class="obj-body">
+      <div class="obj-what"><strong>💬 Em linguagem simples:</strong> ${o.desc}</div>
+      <div class="ev-label">Avaliação</div>
+      <div class="ev-q">🔎 ${o.q}</div>
+      <div class="ev-btns">
+        <button class="ev-btn ev-sim ${ans==='sim'?'act':''}" onclick="setAns('${o.code}','sim')">✅ Sim, temos</button>
+        <button class="ev-btn ev-parc ${ans==='parc'?'act':''}" onclick="setAns('${o.code}','parc')">⚠️ Parcialmente</button>
+        <button class="ev-btn ev-nao ${ans==='nao'?'act':''}" onclick="setAns('${o.code}','nao')">❌ Não temos</button>
+        <button class="ev-btn ev-nsei ${ans==='nsei'?'act':''}" onclick="setAns('${o.code}','nsei')">🤔 Não sei</button>
+      </div>
+      ${gapHtml}
+      <div class="card-acts">
+        <span class="act-lbl">Status:</span>
+        <button class="act-btn a-doing ${st==='doing'?'act':''}" onclick="setSt('${o.code}','doing')">⚡ Em andamento</button>
+        <button class="act-btn a-done ${st==='done'?'act':''}" onclick="setSt('${o.code}','done')">✅ Implementado</button>
+        <button class="act-btn a-na ${st==='na'?'act':''}" onclick="setSt('${o.code}','na')">➖ Não se aplica</button>
+      </div>
+      <textarea class="note-inp" rows="2" placeholder="📝 Observação, responsável, prazo..." onchange="setNote('${o.code}',this.value)">${esc(nota)}</textarea>
+    </div>
+  </div>`;
+}
+
+function toggleDom(id){document.getElementById('dom-'+id).classList.toggle('collapsed');}
+function toggleCard(code){document.getElementById('card-'+code).classList.toggle('expanded');}
+
+// ── INTERAÇÕES ──
+function getData(){return CURRENT_PROJECT._data||(CURRENT_PROJECT._data={answers:{},evidence:{},status:{},notes:{}});}
+
+function setAns(code,val){
+  const d=getData();
+  d.answers[code]=d.answers[code]===val?'':val;
+  saveProjectData();refreshCard(code);updateProgress();
+}
+function setEv(code,val){
+  const d=getData();d.evidence[code]=d.evidence[code]===val?'':val;
+  saveProjectData();refreshCard(code);
+}
+function setSt(code,val){
+  const d=getData();d.status[code]=d.status[code]===val?'none':val;
+  saveProjectData();refreshCard(code);updateProgress();
+  updateDomBar(OBJS.find(o=>o.code===code)?.dom);
+  toast(d.status[code]==='done'?'🎉 Implementado!':'Status atualizado!');
+}
+function setNote(code,val){const d=getData();d.notes[code]=val;saveProjectData();}
+
+function refreshCard(code){
+  const o=OBJS.find(x=>x.code===code);if(!o) return;
+  const el=document.getElementById('card-'+code);if(!el) return;
+  const exp=el.classList.contains('expanded');
+  el.outerHTML=renderObjCard(o,getData());
+  if(exp) document.getElementById('card-'+code).classList.add('expanded');
+}
+
+function updateDomBar(domId){
+  if(!domId) return;
+  const d=getData();
+  const objs=OBJS.filter(o=>o.dom===domId);
+  const done=objs.filter(o=>(d.status||{})[o.code]==='done').length;
+  const pct=Math.round((done/objs.length)*100);
+  const b=document.getElementById('dbar-'+domId);if(b) b.style.width=pct+'%';
+  const wrap=document.querySelector(`#dom-${domId} .dom-pct`);
+  if(wrap) wrap.textContent=`${done}/${objs.length}`;
+}
+
+function updateProgress(){
+  const d=getData();
+  const na=OBJS.filter(o=>(d.status||{})[o.code]==='na').length;
+  const done=OBJS.filter(o=>(d.status||{})[o.code]==='done').length;
+  const doing=OBJS.filter(o=>(d.status||{})[o.code]==='doing').length;
+  const gaps=OBJS.filter(o=>(d.answers||{})[o.code]==='nao').length;
+  const active=OBJS.length-na;
+  const pct=active>0?Math.round((done/active)*100):0;
+  document.getElementById('k-done').textContent=done;
+  document.getElementById('k-doing').textContent=doing;
+  document.getElementById('k-gap').textContent=gaps;
+  document.getElementById('k-na').textContent=na;
+  document.getElementById('k-pct').textContent=pct+'%';
+  document.getElementById('k-bar').style.width=pct+'%';
+  document.getElementById('top-pct').textContent=pct+'%';
+  DOMAINS.forEach(dom=>updateDomBar(dom.id));
+}
+
+// ── FILTROS ──
+let filterSt='all', filterQ='';
+function setFilter(v,el){filterSt=v;document.querySelectorAll('.f-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');applyFilter();}
+function applyFilter(){
+  filterQ=(document.getElementById('f-search')?.value||'').toLowerCase();
+  const d=getData();
+  document.querySelectorAll('.obj-card').forEach(card=>{
+    const code=card.id.replace('card-','');
+    const o=OBJS.find(x=>x.code===code);if(!o) return;
+    const st=(d.status||{})[code]||'none';
+    const ans=(d.answers||{})[code]||'';
+    let show=true;
+    if(filterQ&&!(o.nome+o.desc+code).toLowerCase().includes(filterQ)) show=false;
+    if(filterSt==='done'&&st!=='done') show=false;
+    if(filterSt==='doing'&&st!=='doing') show=false;
+    if(filterSt==='gap'&&ans!=='nao') show=false;
+    if(filterSt==='none'&&(st!=='none'||ans)) show=false;
+    card.style.display=show?'':'none';
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+// EXPORTAR WORD
+// ══════════════════════════════════════════════════════════
+async function exportWord(){
+  if(typeof docx==='undefined'){toast('❌ Biblioteca Word não carregou. Verifique conexão.');return;}
+  const {Document,Packer,Paragraph,TextRun,Table,TableRow,TableCell,
+         HeadingLevel,AlignmentType,BorderStyle,WidthType,ShadingType,
+         LevelFormat,PageBreak}=docx;
+
+  const p=CURRENT_PROJECT;
+  const d=getData();
+  const now=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+
+  // Calcular estatísticas
+  const na=OBJS.filter(o=>(d.status||{})[o.code]==='na').length;
+  const done=OBJS.filter(o=>(d.status||{})[o.code]==='done').length;
+  const doing=OBJS.filter(o=>(d.status||{})[o.code]==='doing').length;
+  const gaps=OBJS.filter(o=>(d.answers||{})[o.code]==='nao').length;
+  const active=OBJS.length-na;
+  const pct=active>0?Math.round((done/active)*100):0;
+
+  const border={style:BorderStyle.SINGLE,size:1,color:'DDDDDD'};
+  const borders={top:border,bottom:border,left:border,right:border};
+  const cellM={top:80,bottom:80,left:120,right:120};
+
+  function h1(txt){return new Paragraph({heading:HeadingLevel.HEADING_1,children:[new TextRun({text:txt,font:'Arial',bold:true,size:32,color:'1E3A5F'})]});}
+  function h2(txt,color){return new Paragraph({heading:HeadingLevel.HEADING_2,children:[new TextRun({text:txt,font:'Arial',bold:true,size:26,color:color||'2563EB'})]});}
+  function body(txt,opts){return new Paragraph({children:[new TextRun({text:txt,font:'Arial',size:22,...(opts||{})})]});}
+  function empty(){return new Paragraph({children:[new TextRun({text:'',font:'Arial',size:22})]});}
+  function divider(){return new Paragraph({border:{bottom:{style:BorderStyle.SINGLE,size:4,color:'2563EB',space:1}},children:[new TextRun('')]});}
+
+  // Tabela KPI
+  function kpiRow(label,value,color){
+    return new TableRow({children:[
+      new TableCell({borders,margins:cellM,width:{size:6500,type:WidthType.DXA},shading:{fill:'F8FAFC',type:ShadingType.CLEAR},children:[new Paragraph({children:[new TextRun({text:label,font:'Arial',size:22})]})] }),
+      new TableCell({borders,margins:cellM,width:{size:2860,type:WidthType.DXA},shading:{fill:color||'F8FAFC',type:ShadingType.CLEAR},children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:String(value),font:'Arial',bold:true,size:26,color:color?'FFFFFF':'2563EB'})]})]}),
+    ]});
+  }
+
+  const kpiTable=new Table({
+    width:{size:9360,type:WidthType.DXA},columnWidths:[6500,2860],
+    rows:[
+      new TableRow({children:[
+        new TableCell({borders,margins:cellM,width:{size:6500,type:WidthType.DXA},shading:{fill:'1E3A5F',type:ShadingType.CLEAR},children:[new Paragraph({children:[new TextRun({text:'Indicador',font:'Arial',bold:true,size:22,color:'FFFFFF'})]})]}),
+        new TableCell({borders,margins:cellM,width:{size:2860,type:WidthType.DXA},shading:{fill:'1E3A5F',type:ShadingType.CLEAR},children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:'Valor',font:'Arial',bold:true,size:22,color:'FFFFFF'})]})]})
+      ]}),
+      kpiRow('Total de Objetivos COBIT 2019',40),
+      kpiRow('✅  Implementados',done,'059669'),
+      kpiRow('⚡  Em Andamento',doing,'D97706'),
+      kpiRow('❌  Lacunas (Não implementados)',gaps,'DC2626'),
+      kpiRow('➖  Não Aplicáveis',na),
+      kpiRow('📊  Percentual de Implementação',pct+'%','2563EB'),
+    ]
+  });
+
+  // Tabela de gaps
+  const gapObjs=OBJS.filter(o=>(d.answers||{})[o.code]==='nao');
+  const gapRows=[
+    new TableRow({children:[
+      new TableCell({borders,margins:cellM,width:{size:1500,type:WidthType.DXA},shading:{fill:'1E3A5F',type:ShadingType.CLEAR},children:[new Paragraph({children:[new TextRun({text:'Código',font:'Arial',bold:true,size:20,color:'FFFFFF'})]})] }),
+      new TableCell({borders,margins:cellM,width:{size:2800,type:WidthType.DXA},shading:{fill:'1E3A5F',type:ShadingType.CLEAR},children:[new Paragraph({children:[new TextRun({text:'Objetivo',font:'Arial',bold:true,size:20,color:'FFFFFF'})]})] }),
+      new TableCell({borders,margins:cellM,width:{size:5060,type:WidthType.DXA},shading:{fill:'1E3A5F',type:ShadingType.CLEAR},children:[new Paragraph({children:[new TextRun({text:'O que precisa ser criado',font:'Arial',bold:true,size:20,color:'FFFFFF'})]})] }),
+    ]}),
+    ...gapObjs.map(o=>new TableRow({children:[
+      new TableCell({borders,margins:cellM,width:{size:1500,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:o.code,font:'Arial',bold:true,size:19,color:'DC2626'})]})] }),
+      new TableCell({borders,margins:cellM,width:{size:2800,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:o.nome,font:'Arial',size:19})]})] }),
+      new TableCell({borders,margins:cellM,width:{size:5060,type:WidthType.DXA},shading:{fill:'FEF2F2',type:ShadingType.CLEAR},children:[new Paragraph({children:[new TextRun({text:o.nao.replace(/📋 O que precisa ser criado:\n/,'').replace(/•/g,'-'),font:'Arial',size:18})]})] }),
+    ]}))
+  ];
+  const gapTable=new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[1500,2800,5060],rows:gapRows});
+
+  // Tabela plano de ação
+  const actionObjs=OBJS.filter(o=>{
+    const st=(d.status||{})[o.code]||'none';
+    const ans=(d.answers||{})[o.code]||'';
+    return st!=='done'&&st!=='na'&&ans&&ans!=='sim';
+  }).slice(0,20);
+
+  const actionRows=[
+    new TableRow({children:[
+      new TableCell({borders,margins:cellM,width:{size:1400,type:WidthType.DXA},shading:{fill:'1E3A5F',type:ShadingType.CLEAR},children:[new Paragraph({children:[new TextRun({text:'Código',font:'Arial',bold:true,size:20,color:'FFFFFF'})]})] }),
+      new TableCell({borders,margins:cellM,width:{size:2600,type:WidthType.DXA},shading:{fill:'1E3A5F',type:ShadingType.CLEAR},children:[new Paragraph({children:[new TextRun({text:'Objetivo',font:'Arial',bold:true,size:20,color:'FFFFFF'})]})] }),
+      new TableCell({borders,margins:cellM,width:{size:1800,type:WidthType.DXA},shading:{fill:'1E3A5F',type:ShadingType.CLEAR},children:[new Paragraph({children:[new TextRun({text:'Status',font:'Arial',bold:true,size:20,color:'FFFFFF'})]})] }),
+      new TableCell({borders,margins:cellM,width:{size:3560,type:WidthType.DXA},shading:{fill:'1E3A5F',type:ShadingType.CLEAR},children:[new Paragraph({children:[new TextRun({text:'Observações / Prazo',font:'Arial',bold:true,size:20,color:'FFFFFF'})]})] }),
+    ]}),
+    ...actionObjs.map(o=>{
+      const st=(d.status||{})[o.code]||'none';
+      const stTxt={none:'Pendente',doing:'Em andamento',done:'Implementado',na:'N/A'}[st]||'Pendente';
+      const nota=(d.notes||{})[o.code]||'—';
+      const stColor=st==='doing'?'FFF3CD':st==='done'?'D1FAE5':'FEE2E2';
+      return new TableRow({children:[
+        new TableCell({borders,margins:cellM,width:{size:1400,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:o.code,font:'Arial',bold:true,size:19})]})]}),
+        new TableCell({borders,margins:cellM,width:{size:2600,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:o.nome,font:'Arial',size:19})]})]}),
+        new TableCell({borders,margins:cellM,width:{size:1800,type:WidthType.DXA},shading:{fill:stColor,type:ShadingType.CLEAR},children:[new Paragraph({children:[new TextRun({text:stTxt,font:'Arial',size:19,bold:true})]})]}),
+        new TableCell({borders,margins:cellM,width:{size:3560,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:nota,font:'Arial',size:18,italics:true})]})]}),
+      ]});
+    })
+  ];
+  const actionTable=new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[1400,2600,1800,3560],rows:actionRows});
+
+  const doc=new Document({
+    styles:{
+      default:{document:{run:{font:'Arial',size:22}}},
+      paragraphStyles:[
+        {id:'Heading1',name:'Heading 1',basedOn:'Normal',next:'Normal',quickFormat:true,run:{size:32,bold:true,font:'Arial',color:'1E3A5F'},paragraph:{spacing:{before:320,after:200},outlineLevel:0}},
+        {id:'Heading2',name:'Heading 2',basedOn:'Normal',next:'Normal',quickFormat:true,run:{size:26,bold:true,font:'Arial',color:'2563EB'},paragraph:{spacing:{before:240,after:160},outlineLevel:1}},
+      ]
+    },
+    sections:[{
+      properties:{page:{size:{width:11906,height:16838},margin:{top:1200,right:1200,bottom:1200,left:1440}}},
+      children:[
+        // CAPA
+        empty(),empty(),empty(),
+        new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:'RELATÓRIO DE AVALIAÇÃO',font:'Arial',bold:true,size:40,color:'1E3A5F'})]}),
+        new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:'Governança de TI — Framework COBIT 2019',font:'Arial',size:28,color:'2563EB'})]}),
+        empty(),empty(),
+        new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:p.name,font:'Arial',bold:true,size:32,color:'374151'})]}),
+        empty(),
+        p.description?new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:p.description,font:'Arial',size:22,italics:true,color:'6B7280'})]}):'',
+        empty(),empty(),empty(),
+        new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:now,font:'Arial',size:22,color:'9CA3AF'})]}),
+        new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:'Objetivo: '+(GOAL_LBL[p.goal]||'—'),font:'Arial',size:22,color:'9CA3AF'})]}),
+        new Paragraph({children:[new PageBreak()]}),
+
+        // 1. RESUMO EXECUTIVO
+        h1('1. Resumo Executivo'),
+        divider(),empty(),
+        body(`Este relatório apresenta os resultados da avaliação do framework COBIT 2019 para o projeto "${p.name}", realizada em ${now}. A avaliação abrangeu os 40 objetivos de governança distribuídos nos 5 domínios do COBIT 2019 (EDM, APO, BAI, DSS, MEA).`),
+        empty(),
+        body('Objetivo do Projeto: '+(GOAL_LBL[p.goal]||'Não definido'),{bold:true}),
+        body('Porte da Organização: '+(SIZE_LBL[p.size]||'Não definido')),
+        body('Maturidade Atual: '+(MAT_LBL[p.maturity]||'Não definido')),
+        empty(),
+        h2('Indicadores Gerais'),
+        empty(),kpiTable,empty(),
+        body(pct>=75?'✅ A organização demonstra alto nível de implementação do COBIT 2019. Foco em manutenção e melhoria contínua.':pct>=50?'🟡 A organização está em estágio intermediário de implementação. Priorize a resolução das lacunas identificadas.':pct>=25?'🟠 A organização está em fase inicial de implementação. Recomenda-se um plano de ação estruturado.':'🔴 A organização está no início da jornada de governança de TI. Priorize os objetivos fundamentais dos domínios EDM e APO.',{italics:true,color:'374151'}),
+        empty(),
+
+        // 2. LACUNAS
+        new Paragraph({children:[new PageBreak()]}),
+        h1('2. Lacunas Identificadas (Gaps)'),
+        divider(),empty(),
+        body(`Foram identificadas ${gaps} lacuna(s) onde a organização ainda não possui as práticas implementadas. Para cada lacuna, é apresentado o que precisa ser criado ou estruturado:`),
+        empty(),
+        gapObjs.length>0?gapTable:body('Nenhuma lacuna identificada até o momento.',{italics:true}),
+        empty(),
+
+        // 3. PLANO DE AÇÃO
+        new Paragraph({children:[new PageBreak()]}),
+        h1('3. Plano de Ação — Próximos Passos'),
+        divider(),empty(),
+        body('Os objetivos abaixo representam as próximas ações recomendadas, priorizados com base no objetivo do projeto e no status atual de implementação:'),
+        empty(),
+        actionObjs.length>0?actionTable:body('Todos os objetivos avaliados foram implementados ou não se aplicam. Parabéns!',{italics:true,color:'059669'}),
+        empty(),
+
+        // 4. DETALHAMENTO POR DOMÍNIO
+        new Paragraph({children:[new PageBreak()]}),
+        h1('4. Detalhamento por Domínio'),
+        divider(),
+        ...DOMAINS.flatMap(dom=>{
+          const domObjs=OBJS.filter(o=>o.dom===dom.id);
+          const domDone=domObjs.filter(o=>(d.status||{})[o.code]==='done').length;
+          const domNa=domObjs.filter(o=>(d.status||{})[o.code]==='na').length;
+          const domActive=domObjs.length-domNa;
+          const domPct=domActive>0?Math.round((domDone/domActive)*100):0;
+          return [
+            empty(),
+            h2(`${dom.id} — ${dom.nome} (${domPct}% implementado)`),
+            body(`${domDone} de ${domActive} objetivos implementados.`),
+            ...domObjs.map(o=>{
+              const st=(d.status||{})[o.code]||'none';
+              const ans=(d.answers||{})[o.code]||'';
+              const nota=(d.notes||{})[o.code]||'';
+              const stEmoji={none:'⚪',doing:'🟡',done:'🟢',na:'➖'}[st]||'⚪';
+              return new Paragraph({numbering:{reference:'bullets',level:0},children:[
+                new TextRun({text:`${stEmoji} ${o.code} — ${o.nome}`,font:'Arial',size:20,bold:true}),
+                ...(nota?[new TextRun({text:` | ${nota}`,font:'Arial',size:19,italics:true,color:'6B7280'})]:[]),
+              ]});
+            }),
+          ];
+        }),
+        empty(),
+        new Paragraph({children:[new PageBreak()]}),
+        h1('5. Próximas Revisões Recomendadas'),
+        divider(),empty(),
+        body('Para garantir a evolução contínua da governança de TI, recomenda-se:'),
+        empty(),
+        ...[
+          'Revisar este diagnóstico a cada 6 meses ou após mudanças significativas na estratégia ou estrutura da organização.',
+          'Estabelecer um comitê de governança de TI responsável por acompanhar o plano de ação.',
+          'Priorizar os objetivos com lacuna (gap) que estão diretamente relacionados ao objetivo principal do projeto.',
+          'Documentar evidências de implementação para cada objetivo conforme forem sendo concluídos.',
+          'Envolver a alta direção nas revisões periódicas de governança.',
+        ].map(txt=>new Paragraph({numbering:{reference:'numbered',level:0},children:[new TextRun({text:txt,font:'Arial',size:21})]})),
+        empty(),empty(),
+        divider(),
+        new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:`Relatório gerado em ${now} — COBIT 2019 Governance Assessment`,font:'Arial',size:18,italics:true,color:'9CA3AF'})]}),
+      ].filter(Boolean)
+    }],
+    numbering:{config:[
+      {reference:'bullets',levels:[{level:0,format:LevelFormat.BULLET,text:'•',alignment:AlignmentType.LEFT,style:{paragraph:{indent:{left:720,hanging:360}}}}]},
+      {reference:'numbered',levels:[{level:0,format:LevelFormat.DECIMAL,text:'%1.',alignment:AlignmentType.LEFT,style:{paragraph:{indent:{left:720,hanging:360}}}}]},
+    ]}
+  });
+
+  toast('⏳ Gerando relatório Word...');
+  const buf=await Packer.toBuffer(doc);
+  const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`COBIT2019_${p.name.replace(/[^a-zA-Z0-9]/g,'_')}_${new Date().toISOString().slice(0,10)}.docx`;
+  a.click();
+  toast('✅ Relatório Word exportado com sucesso!');
+}
+
+// ══════════════════════════════════════════════════════════
+// UTILITÁRIOS
+// ══════════════════════════════════════════════════════════
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(id==='projects'){
+    document.getElementById('top-proj-name').style.display='none';
+    document.getElementById('top-pct').style.display='none';
+    document.getElementById('btn-back-proj').style.display='none';
+    loadProjects();
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+let toastT;
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2800);}
+
+// Fechar modais clicando fora
+document.querySelectorAll('.modal-overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o) o.classList.remove('open');});});
+
+// Adicionar data-val nos choice cards do wizard
+document.querySelectorAll('#goal-grid .choice-card').forEach((el,i)=>{const vals=['compliance','risk','digital','efficiency','security','strategy'];el.setAttribute('data-val',vals[i]);});
+document.querySelectorAll('#size-grid .choice-card').forEach((el,i)=>{el.setAttribute('data-val',['small','medium','large'][i]);});
+document.querySelectorAll('#mat-grid .choice-card').forEach((el,i)=>{el.setAttribute('data-val',['inicial','parcial','madura'][i]);});
+
+// ── INIT ──
+loadConfig();
+loadProjects();
+</script>
+</body>
+</html>
