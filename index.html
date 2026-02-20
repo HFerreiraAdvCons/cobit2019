@@ -470,7 +470,7 @@ var PROJECTS=[];
 function loadConfig(){
   SB_URL=localStorage.getItem('cobit_sb_url')||'';
   SB_KEY=localStorage.getItem('cobit_sb_key')||'';
-  USE_LOCAL=localStorage.getItem('cobit_local')==='1';
+  USE_LOCAL=true;
   if(SB_URL) document.getElementById('sb-url').value=SB_URL;
   if(SB_KEY) document.getElementById('sb-key').value=SB_KEY;
   if(USE_LOCAL){
