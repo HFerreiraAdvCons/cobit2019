@@ -458,9 +458,9 @@ const MAT_LBL={inicial:'🌱 Maturidade Inicial',parcial:'🌿 Em Desenvolviment
 // ══════════════════════════════════════════════════════════
 // SUPABASE / STORAGE
 // ══════════════════════════════════════════════════════════
-let SB_URL='https://xdreuomykmcnhqlcxwdd.supabase.co', SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkcmV1b215a21jbmhxbGN4d2RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1NDQ1MjQsImV4cCI6MjA4NzEyMDUyNH0.B9Qz-AIdmkjZAivs_cZaKYUG2t0jugpdDJWQl8JyFfY', USE_LOCAL=false;
-let CURRENT_PROJECT=null;
-let PROJECTS=[];
+var SB_URL='https://xdreuomykmcnhqlcxwdd.supabase.co'; var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkcmV1b215a21jbmhxbGN4d2RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1NDQ1MjQsImV4cCI6MjA4NzEyMDUyNH0.B9Qz-AIdmkjZAivs_cZaKYUG2t0jugpdDJWQl8JyFfY'; var USE_LOCAL=false;
+var CURRENT_PROJECT=null;
+var PROJECTS=[];
 
 function loadConfig(){
   SB_URL=localStorage.getItem('cobit_sb_url')||'';
@@ -469,7 +469,7 @@ function loadConfig(){
   if(SB_URL) document.getElementById('sb-url').value=SB_URL;
   if(SB_KEY) document.getElementById('sb-key').value=SB_KEY;
   if(USE_LOCAL){
-    // setup hidden
+    document.getElementById('supabase-setup').style.display='none';
     document.getElementById('sync-indicator').style.display='flex';
   }
 }
@@ -482,7 +482,7 @@ function saveConfig(){
 function useLocalMode(){
   USE_LOCAL=true;
   localStorage.setItem('cobit_local','1');
-  // setup hidden
+  document.getElementById('supabase-setup').style.display='none';
   document.getElementById('sync-indicator').style.display='flex';
   loadProjects();
   toast('💾 Modo local ativado. Dados salvos neste navegador.');
@@ -533,24 +533,12 @@ function copySQL(){
 }
 
 async function sbFetch(method,path,body){
-  const headers={
-    'apikey':SB_KEY,
-    'Authorization':'Bearer '+SB_KEY,
-    'Content-Type':'application/json',
-    'Prefer':'return=representation',
-    'Accept':'application/json',
-    'X-Client-Info':'supabase-js/2.0.0'
-  };
   const res=await fetch(`${SB_URL}/rest/v1/${path}`,{
     method,
-    headers,
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation','Accept':'application/json'},
     body:body?JSON.stringify(body):undefined
   });
-  // Se resposta não for JSON válido, lança erro com status
-  if(!res.ok){
-    const txt=await res.text();
-    throw new Error(`HTTP ${res.status}: ${txt.substring(0,120)}`);
-  }
+  if(!res.ok){const t=await res.text();throw new Error(`HTTP ${res.status}: ${t.substring(0,100)}`);}
   return res;
 }
 
@@ -563,14 +551,12 @@ async function loadProjects(){
   if(!SB_URL||!SB_KEY) return;
   try{
     const r=await sbFetch('GET','projects?select=*&order=updated_at.desc');
-    const txt=await r.text();
-    PROJECTS=(txt&&txt.trim().length>0)?JSON.parse(txt):[];
+    PROJECTS=await r.json();
     if(!Array.isArray(PROJECTS)) PROJECTS=[];
     for(const p of PROJECTS){
       try{
         const rd=await sbFetch('GET',`project_data?project_id=eq.${p.id}&select=status`);
-        const dt=await rd.text();
-        const d=(dt&&dt.trim().length>0)?JSON.parse(dt):[];
+        const d=await rd.json();
         if(d&&d[0]) p._status=d[0].status||{};
       }catch(e2){p._status={};}
     }
@@ -631,9 +617,7 @@ async function createProject(){
     localStorage.setItem('cobit_data_'+p.id,JSON.stringify({answers:{},evidence:{},status:{},notes:{}}));
   } else {
     try{
-      // Usar id gerado no cliente para garantir consistência
-      const payload={id:p.id,name,description:desc,goal:null,size:null,maturity:null,created_at:p.created_at,updated_at:p.updated_at};
-      await sbFetch('POST','projects',payload);
+      await sbFetch('POST','projects',{id:p.id,name,description:desc,goal:null,size:null,maturity:null,created_at:p.created_at,updated_at:p.updated_at});
       await sbFetch('POST','project_data',{project_id:p.id,answers:{},evidence:{},status:{},notes:{}});
       PROJECTS.unshift(p);
     }catch(e){toast('Erro ao criar projeto: '+e.message);console.error(e);return;}
@@ -654,8 +638,7 @@ async function openProject(id){
   } else {
     try{
       const r=await sbFetch('GET',`project_data?project_id=eq.${id}&select=*`);
-      const txt=await r.text();
-      const d=(txt&&txt.trim().length>0)?JSON.parse(txt):[];
+      const d=await r.json();
       CURRENT_PROJECT._data=d&&d[0]?d[0]:{answers:{},evidence:{},status:{},notes:{}};
     }catch(e){CURRENT_PROJECT._data={answers:{},evidence:{},status:{},notes:{}};}
   }
